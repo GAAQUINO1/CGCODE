@@ -1,38 +1,43 @@
-CloudGirl: Something’s off tonight. What’s our lead, Alfie?
-Alfie: A string of missing people near the old library. Someone saw a figure lurking there.
+hello, this is a sample script to test merging and splitting.
+there are three choices presented to you.
 
 [CHOICE]
-Investigate the library | Check security camera
+left side | center | right side
 
-[IF INVESTIGATE_THE_LIBRARY]
-CloudGirl: Heading to the library now. Looks quiet… too quiet.
-Alfie: Be careful. Something isn’t right.
+[LEFT_SIDE]
+you have picked the left side.
 
-[CHOICE]
-Enter front | Sneak back
-ENTER_FRONT | SNEAK_BACK
+[CENTER]
+you go through the center.
 
-[IF ENTER_FRONT | IF SNEAK_BACK]
-CloudGirl: Stepping in now. Dark, empty… wait, what was that noise?
-Alfie: You’re not alone.
-🏁 **ENDING: Caught in the Dark**
+[RIGHT_SIDE]
+you have picked the right side.
 
-
-
-[IF CHECK_SECURITY_CAMERAS]
-Alfie: Checking the last footage. There! Someone in a hood—wait, they’re looking at the camera.
-CloudGirl: That’s creepy. They knew they were being watched.
+[MERGE]
+the paths merge into one, only to split again.
 
 [CHOICE]
-Trace their movements | Set a trap
-TRACE_MOVEMENTS | SET_A_TRAP
+left side | center | right side
 
-[IF TRACE_MOVEMENTS]
-CloudGirl: Following their trail now… wait, it just stops?
-Alfie: That’s impossible. People don’t just vanish.
-🏁 **ENDING: Gone Without a Trace**
+[LEFT_SIDE | RIGHT_SIDE]
+the side path meanders into many directions. where to now?
 
-[IF SET_A_TRAP]
-CloudGirl: Luring them in now. If they want to watch, let’s give them a reason.
-Alfie: I hope this works…
-🏁 **ENDING: The Bait is Set**
+[CHOICE]
+up | down
+
+[UP]
+you go up, up, up. there is an exit.
+
+[DOWN]
+you go down, down, down. there is an exit.
+
+[MERGE]
+
+[CENTER]
+the center path brings you all the way through.
+
+[MERGE]
+you have reached the end.
+(end of script file)
+
+[END]
