@@ -16,6 +16,7 @@ public class ChatController : MonoBehaviour
     public float choiceDelay = 0.5f;
 
     private Coroutine gameCoroutine;
+    private bool gameStarted = false;
     private string searchTag = "";
     private bool paused = true;
     private bool storyComplete = false;
@@ -48,7 +49,10 @@ public class ChatController : MonoBehaviour
     public void StartChat()
     {
         Debug.Log("▶️ Starting chat interaction.");
-        paused = false;
+        if (!gameStarted) {
+            gameStarted = true;
+            paused = false;
+        }
     }
 
     IEnumerator LoadScript()
@@ -218,7 +222,7 @@ public class ChatController : MonoBehaviour
         Debug.Log($"🎯 Choice Selected: {choiceTag}");
 
         playerChoices[choiceTag] = true;
-        ClearScreen();
+        // ClearScreen();
         searchTag = choiceTag;
         paused = false;
 
