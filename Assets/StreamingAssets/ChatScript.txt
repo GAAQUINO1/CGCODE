@@ -1,0 +1,43 @@
+hello, this is a sample script to test merging and splitting.
+there are three choices presented to you.
+
+[CHOICE]
+left side | center | right side
+
+[LEFT_SIDE]
+you have picked the left side.
+
+[CENTER]
+you go through the center.
+
+[RIGHT_SIDE]
+you have picked the right side.
+
+[MERGE]
+the paths merge into one, only to split again.
+
+[CHOICE]
+left side | center | right side
+
+[LEFT_SIDE | RIGHT_SIDE]
+the side path meanders into many directions. where to now?
+
+[CHOICE]
+up | down
+
+[UP]
+you go up, up, up. there is an exit.
+
+[DOWN]
+you go down, down, down. there is an exit.
+
+[MERGE]
+
+[CENTER]
+the center path brings you all the way through.
+
+[MERGE]
+you have reached the end.
+(end of script file)
+
+[END]
