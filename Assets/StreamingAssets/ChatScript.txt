@@ -1,43 +1,43 @@
-hello, this is a sample script to test merging and splitting.
-there are three choices presented to you.
+﻿it’s a quiet evening on the rooftop above the forest-side dorms.
+cloudgirl adjusts her goggles. alfie hums over the comms, relaxed.
+a gentle breeze. distant birdsong.
 
 [CHOICE]
-left side | center | right side
+check the hill path | look down at the courtyard | scan the treetops
 
-[LEFT_SIDE]
-you have picked the left side.
+[CHECK_THE_HILL_PATH]
+she spots something moving near the trail. slow, careful.
+it’s a deer, head low, munching grass.
 
-[CENTER]
-you go through the center.
+[LOOK_DOWN_AT_THE_COURTYARD]
+she leans over the edge.
+two deer are nibbling flowers by the bike racks.
+they glance up, unbothered.
 
-[RIGHT_SIDE]
-you have picked the right side.
+[SCAN_THE_TREETOPS]
+she scans the canopy.
+a flicker of motion — a deer walking along the ridge, then vanishing into green.
 
 [MERGE]
-the paths merge into one, only to split again.
+the deer are everywhere tonight.
+she smiles, tugs her hoodie tighter.
+it feels like a good night to just exist.
 
 [CHOICE]
-left side | center | right side
+follow one quietly | sketch them | radio alfie
 
-[LEFT_SIDE | RIGHT_SIDE]
-the side path meanders into many directions. where to now?
+[SKETCH_THEM | FOLLOW_ONE_QUIETLY]
+she pulls out a little notebook from her utility pouch.
+soft steps. sketch lines. breathing slow.
 
-[CHOICE]
-up | down
-
-[UP]
-you go up, up, up. there is an exit.
-
-[DOWN]
-you go down, down, down. there is an exit.
+[RADIO_ALFIE]
+cloudgirl: deer. like, three of them.
+alfie: confirmed visual. majestic creatures.
+she laughs quietly.
 
 [MERGE]
-
-[CENTER]
-the center path brings you all the way through.
-
-[MERGE]
-you have reached the end.
+they don’t say anything else for a while.
+they just listen to the forest.
 (end of script file)
 
 [END]

@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
+
+
 public class ChatController : MonoBehaviour
 {
     public GameObject chatMessagePrefab;
@@ -14,6 +16,9 @@ public class ChatController : MonoBehaviour
     public float messageDelay = 1f;
     public float letterDelay = 0.05f;
     public float choiceDelay = 0.5f;
+
+    public event System.Action OnStoryComplete;
+
 
     private Coroutine gameCoroutine;
     private bool gameStarted = false;
@@ -77,6 +82,9 @@ public class ChatController : MonoBehaviour
             {
                 Debug.Log("🏁 Story complete. Ending chat.");
                 storyComplete = true;
+
+                OnStoryComplete?.Invoke();  // This triggers the cutscene
+
                 HideChoices();
                 break;
             }
