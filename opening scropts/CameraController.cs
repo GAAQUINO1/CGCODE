@@ -7,7 +7,6 @@ public class CameraController : MonoBehaviour
     public float moveDuration = 2f;
     private bool isInteracting = false;
     private bool allowExit = true;
-    private string currentMonitor = "";
 
     public GameObject leftMonitorUI;
     public GameObject rightMonitorUI;
@@ -59,7 +58,6 @@ public class CameraController : MonoBehaviour
 
     void FocusOnMonitor(string monitor)
     {
-        if (currentMonitor == monitor) return;
         if (isInteracting) return;
         isInteracting = true;
 
@@ -67,7 +65,6 @@ public class CameraController : MonoBehaviour
 
         if (monitor == "left")
         {
-            currentMonitor = "left";
             target = leftMonitorPos;
 
             // 🔥 Move the camera first, then start chat AFTER the movement finishes
@@ -85,7 +82,6 @@ public class CameraController : MonoBehaviour
         }
         else if (monitor == "right")
         {
-            currentMonitor = "right";
             target = rightMonitorPos;
             LeanTween.move(gameObject, target.position, 0.5f).setEase(LeanTweenType.easeInOutQuad);
             LeanTween.rotate(gameObject, target.rotation.eulerAngles, 0.5f).setEase(LeanTweenType.easeInOutQuad)
@@ -97,7 +93,6 @@ public class CameraController : MonoBehaviour
     {
         if (!allowExit) return;
 
-        currentMonitor = "";
         LeanTween.move(gameObject, defaultPosition.position, 0.5f).setEase(LeanTweenType.easeInOutQuad);
         LeanTween.rotate(gameObject, defaultPosition.rotation.eulerAngles, 0.5f).setEase(LeanTweenType.easeInOutQuad);
     }

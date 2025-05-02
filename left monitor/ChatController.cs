@@ -15,6 +15,8 @@ public class ChatController : MonoBehaviour
     public float letterDelay = 0.05f;
     public float choiceDelay = 0.5f;
 
+    public event System.Action OnStoryComplete;
+
     private Coroutine gameCoroutine;
     private bool gameStarted = false;
     private string searchTag = "";
@@ -26,7 +28,6 @@ public class ChatController : MonoBehaviour
     private Dictionary<string, bool> playerChoices = new Dictionary<string, bool>();
 
     [Header("Chat File")]
-
     public string chatFile = "ChatScript.txt";
 
     void Start()
@@ -46,10 +47,11 @@ public class ChatController : MonoBehaviour
 
         gameCoroutine = StartCoroutine(LoadScript());
     }
+
     public void StartChat()
     {
-        Debug.Log("▶️ Starting chat interaction.");
-        if (!gameStarted) {
+        if (!gameStarted)
+        {
             gameStarted = true;
             paused = false;
         }
@@ -62,37 +64,62 @@ public class ChatController : MonoBehaviour
         bool printingText = true;
         int seeking = 0;
 
-        foreach (string line in script)
+        CutsceneTrigger cutsceneTrigger = FindObjectOfType<CutsceneTrigger>();
+
+        for (int i = 0; i < script.Length; i++)
         {
-            while (paused)
+            string line = script[i].Trim();
+            while (paused) yield return null;
+
+            Debug.Log($"📜 Processing line: {line}");
+
+            if (line.StartsWith("[CUTSCENE:"))
             {
-                yield return null;
+                string cutsceneName = line.Substring(10, line.Length - 11);
+                paused = true;
+
+                CutsceneManager cutsceneManager = FindObjectOfType<CutsceneManager>();
+                bool cutsceneFinished = false;
+
+                cutsceneManager.PlayCutscene(cutsceneName, () =>
+                {
+                    cutsceneFinished = true;
+                    paused = false;
+                });
+
+                // Wait here until the cutscene finishes
+                while (!cutsceneFinished)
+                {
+                    yield return null;
+                }
+
+                // ✅ Make sure printingText is reset after the cutscene
+                printingText = true;
+
+                continue;
             }
 
-            string trimmed = line.Trim();
 
-			Debug.Log($"📜 Processing line: {trimmed}");
-            if (trimmed == "[END]")
+            if (line == "[END]")
             {
-                Debug.Log("🏁 Story complete. Ending chat.");
                 storyComplete = true;
+                OnStoryComplete?.Invoke();
                 HideChoices();
                 break;
             }
-            else if (string.IsNullOrWhiteSpace(trimmed))
+            else if (string.IsNullOrWhiteSpace(line))
             {
                 printingText = false;
             }
             else if (printingText)
             {
-                // normal message
                 yield return StartCoroutine(DisplayMessage(line));
             }
             else if (isChoiceSection)
             {
                 // choice selection
                 isChoiceSection = false;
-                string[] parts = trimmed.Split('|');
+                string[] parts = line.Split('|');
                 List<(string text, string tag)> choices = new List<(string, string)>();
                 foreach (string part in parts)
                 {
@@ -100,72 +127,53 @@ public class ChatController : MonoBehaviour
                     string tag = cleanText.ToUpper().Replace(" ", "_");
                     choices.Add((cleanText, tag));
                 }
-
                 Debug.Log($"📝 Choices Loaded: {string.Join(", ", choices)}");
                 yield return new WaitForSeconds(choiceDelay);
                 ShowChoices(choices);
                 paused = true;
                 yield return null;
             }
-            else if (!trimmed.StartsWith("["))
+            else if (!line.StartsWith("["))
             {
                 continue;
             }
             else if (searchTag != "")
             {
-                Debug.Log($"🔍 Searching for tag: {searchTag}");
+                string[] possibilities = line.Trim('[', ']')
+                    .Split('|')
+                    .Select(p => p.Trim())
+                    .ToArray();
 
-                string[] possibilities = trimmed.Trim('[', ']')
-                                                .Split('|')
-                                                .Select(possibility => possibility.Trim())
-                                                .ToArray();;
-                Debug.Log($"🔎 Possible tags: {string.Join(", ", possibilities)}");
-                Debug.Log(possibilities.Contains(searchTag));
                 if (possibilities.Contains(searchTag))
                 {
-                    Debug.Log($"✅ Found matching tag: {searchTag}");
                     searchTag = "";
                     printingText = true;
                 }
+                else
+                {
+                    // skip non-matching blocks safely
+                    continue;
+                }
             }
-            else if (trimmed == "[CHOICE]")
+            else if (line == "[CHOICE]")
             {
                 isChoiceSection = true;
                 seeking++;
                 continue;
             }
-            else if (seeking > 0)
+            else if (seeking > 0 && line == "[MERGE]")
             {
-                if (trimmed == "[MERGE]")
-                {
-                    Debug.Log("🔄 Merging sections, resuming chat.");
-                    seeking--;
-                    printingText = true;
-                    if (seeking < 0)
-                    {
-                        Debug.LogError("🚨 Extraneous Merge.");
-                        break;
-                        yield return null;
-                    }
-                }
+                seeking--;
+                printingText = true;
                 continue;
             }
         }
 
-        if (searchTag != "")
-        {
-            Debug.Log($"🚨 No matching content for: {searchTag}");
-        }
-        if (seeking > 0)
-        {
-            Debug.LogError("🚨 Unmatched Merge tags found in script.");
-        }
         yield return null;
     }
 
     IEnumerator DisplayMessage(string message)
     {
-        Debug.Log("▶️ Starting DisplayMessages() coroutine.");
         yield return StartCoroutine(TypeMessage(message));
         yield return new WaitForSeconds(messageDelay);
     }
@@ -185,6 +193,7 @@ public class ChatController : MonoBehaviour
             yield return new WaitForSeconds(letterDelay);
         }
     }
+
     void ClearScreen()
     {
         foreach (GameObject msg in messages)
@@ -193,15 +202,10 @@ public class ChatController : MonoBehaviour
         }
         messages.Clear();
         HideChoices();
-
-        Debug.Log("🗑️ Clearing screen.");
     }
 
     void ShowChoices(List<(string text, string tag)> choices)
     {
-        Debug.Log($"🔵 {choices.Count} Choices Available: {string.Join(", ", choices)}");
-
-        // **Choice Layout Fix**
         for (int i = 0; i < 3; i++)
         {
             choiceButtons[i].gameObject.SetActive(i < choices.Count);
@@ -219,14 +223,11 @@ public class ChatController : MonoBehaviour
 
     void SelectChoice(string choiceTag)
     {
-        Debug.Log($"🎯 Choice Selected: {choiceTag}");
-
         playerChoices[choiceTag] = true;
-        // ClearScreen();
+        HideChoices();
+
         searchTag = choiceTag;
         paused = false;
-
-        Debug.Log($"🔄 Loading next section of chat for choice: {choiceTag}");
     }
 
     void HideChoices()
