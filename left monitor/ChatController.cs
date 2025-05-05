@@ -23,6 +23,8 @@ public class ChatController : MonoBehaviour
     private bool paused = true;
     private bool storyComplete = false;
 
+    public ScrollRect chatScrollRect;
+
     private string[] script;
     private List<GameObject> messages = new List<GameObject>();
     private Dictionary<string, bool> playerChoices = new Dictionary<string, bool>();
@@ -178,6 +180,7 @@ public class ChatController : MonoBehaviour
         yield return new WaitForSeconds(messageDelay);
     }
 
+
     IEnumerator TypeMessage(string message)
     {
         GameObject newMessage = Instantiate(chatMessagePrefab, chatContent);
@@ -187,12 +190,26 @@ public class ChatController : MonoBehaviour
 
         messages.Add(newMessage);
 
+        // Get the ScrollRect once at the start
+        ScrollRect scrollRect = GetComponentInChildren<ScrollRect>();
+
         foreach (char letter in message)
         {
             textComponent.text += letter;
+
+            // Force layout update
+            Canvas.ForceUpdateCanvases();
+
+            // Scroll to bottom after each character (or you can do this every few characters)
+            if (scrollRect != null)
+            {
+                scrollRect.verticalNormalizedPosition = 0f;
+            }
+
             yield return new WaitForSeconds(letterDelay);
         }
     }
+
 
     void ClearScreen()
     {
