@@ -1,7 +1,7 @@
 ﻿System: FOR THREE MONTHS, YOU'VE BEEN HELPING OUT YOUR FRIEND IN HER PURSUIT OF HEROIC GOOD DEEDS
 System: TODAY IS A NEW DAY, WITH NEW REQUESTS AND STRANGE SITUATIONS TO UNTANGLE
 System: YOUR JOB IS TO HELP CLOUD GIRL OUT, BE A SUPPORTIVE VOICE IN HER EAR AND HELP MAKE HER WORK GO AS SMOOTHLY AS POSSIBLE. DO YOUR BEST TO FACILITATE HER GROWING NOTORIETY, BUT DON'T LET THE ATTENTION OVERWHELM. 
-System: DO YOU ACCEPT? 
+System: BEGIN DAY? 
 
 [CHOICE] 
 Yes
@@ -33,14 +33,14 @@ Alfie: Achievement unlocked, only two college students with a healthy sleep sche
 [LOTS_OF_THINGS_ARE_IMPORTANT]
 Alfie: I got… enough sleep. 
 Cloud Girl: Alfie, you’ve got to try to get eight hours! It’s important. 
-Alfie: I’m pretty sure you’re the only person at this school who gets enough sleep, Celeste. 
+Alfie: I’m pretty sure you’re the only person at this school who gets enough sleep, Cloud Girl. 
 
 [NOT_TO_ME]
 Alfie: Some things are more important. 
 Cloud Girl: We can disagree to agree on that!
 Alfie: That’s, wait, what?
 Cloud Girl: That’s why I need you on top of your game, Alfie! You have to be the person who’s three steps ahead. 
-Alfie: Agree to disagree, Celeste. You don’t have to worry about me. 
+Alfie: Agree to disagree, Cloud Girl. You don’t have to worry about me. 
 
 [MERGE]
 Cloud Girl: Okay, are there any new posts yet? 
@@ -95,9 +95,9 @@ I looked at social media
 System: GOOD JOB!
 
 [CHOICE]
-Yik Yak
+Grocery Scenario
 
-[YIK_YAK]
+[GROCERY_SCENARIO]
 Cloud Girl: What are you thinking?
 
 [CHOICE]
@@ -135,21 +135,20 @@ System: BLOG UPDATED TO ACTIVE DUTY
 Alfie: Might as well make a flashy entrance! That'll put you on the radar, but I'm sure they'll appreciate the quick help. 
 Cloud Girl: Got it. It'll take me two bursts, then I'll identify the targets.
 
-[HEAD_THERE_ON_FOOT | TELEPORT_IN]
-Cloud Girl: Oh! I think I see them!
-
 [MERGE]
+Cloud Girl: Oh! I think I see them!
 System: CUTSCENE TIME!
 
 [CHOICE]
-PLAY GROCERY3
+PLAY CUTSCENE | SKIP
 
-[PLAY_GROCERY3]
+[PLAY_CUTSCENE]
+[CUTSCENE:grocery]
 
-[CHOICE]
-END CUTSCENE
+[SKIP]
+System: You have skipped the cutscene.
 
-[END_CUTSCENE]
+[MERGE]
 Alfie: That’s it?
 Cloud Girl: I'm all done! What's next?
 Alfie: Let me refresh everything, see what's changed.
