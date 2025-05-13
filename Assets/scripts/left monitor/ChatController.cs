@@ -29,25 +29,20 @@ public class ChatController : MonoBehaviour
     private List<GameObject> messages = new List<GameObject>();
     private Dictionary<string, bool> playerChoices = new Dictionary<string, bool>();
 
+    private List<string> ScriptQueue = new List<string>();
+    private const string SCRIPT_INDICATOR = "!!NEW_SCRIPT!!";
+
     [Header("Chat File")]
     public string chatFile = "ChatScript.txt";
 
     void Start()
     {
         HideChoices();
-
-        string filePath = Path.Combine(Application.streamingAssetsPath, chatFile);
-        script = File.ReadAllLines(filePath);
-
-        if (!File.Exists(filePath))
-        {
-            Debug.LogError($"❌ Chat file not found: {filePath}");
-            return;
-        }
-
-        Debug.Log("✅ Chat system ready. Waiting for player to interact.");
-
+        LoadScriptFile(chatFile);
         gameCoroutine = StartCoroutine(LoadScript());
+
+        // TODO ANGEL LOOK HERE
+        AddScriptFile("Next.txt");
     }
 
     public void StartChat()
@@ -59,6 +54,30 @@ public class ChatController : MonoBehaviour
         }
     }
 
+    public void AddScriptFile(string fileName)
+    {
+        Debug.Log("Adding Script to Queue");
+        ScriptQueue.Add(fileName);
+        foreach( var x in ScriptQueue) {
+            Debug.Log( x.ToString());
+        }
+
+    }
+
+    private void LoadScriptFile(string fileName)
+    {
+        string filePath = Path.Combine(Application.streamingAssetsPath, fileName);
+        script = File.ReadAllLines(filePath);
+
+        if (!File.Exists(filePath))
+        {
+            Debug.LogError($"❌ Chat file not found: {filePath}");
+            return;
+        }
+
+        Debug.Log("✅ Chat system ready. Waiting for player to interact.");
+    }
+
     IEnumerator LoadScript()
     {
         Debug.Log("🔄 Loading script from file...");
@@ -66,7 +85,7 @@ public class ChatController : MonoBehaviour
         bool printingText = true;
         int seeking = 0;
 
-        CutsceneTrigger cutsceneTrigger = FindObjectOfType<CutsceneTrigger>();
+        CutsceneTrigger cutsceneTrigger = FindFirstObjectByType<CutsceneTrigger>();
 
         for (int i = 0; i < script.Length; i++)
         {
@@ -80,7 +99,7 @@ public class ChatController : MonoBehaviour
                 string cutsceneName = line.Substring(10, line.Length - 11);
                 paused = true;
 
-                CutsceneManager cutsceneManager = FindObjectOfType<CutsceneManager>();
+                CutsceneManager cutsceneManager = FindFirstObjectByType<CutsceneManager>();
                 bool cutsceneFinished = false;
 
                 cutsceneManager.PlayCutscene(cutsceneName, () =>
@@ -171,6 +190,23 @@ public class ChatController : MonoBehaviour
             }
         }
 
+        // current script has ended
+        Debug.Log("Current Script has ended.");
+        Debug.Log("Script Queue Length: " + ScriptQueue.Count.ToString());
+        if (ScriptQueue.Count > 0)
+        {
+            List<(string text, string tag)> choices = new List<(string, string)>();
+            foreach (string Script in ScriptQueue)
+            {
+                choices.Add((Script, string.Concat(SCRIPT_INDICATOR, Script)));
+                if (choices.Count >= 3)
+                {
+                    break;
+                }
+            }
+            ShowChoices(choices);
+        }
+
         yield return null;
     }
 
@@ -240,11 +276,25 @@ public class ChatController : MonoBehaviour
 
     void SelectChoice(string choiceTag)
     {
-        playerChoices[choiceTag] = true;
-        HideChoices();
+        if (choiceTag.StartsWith(SCRIPT_INDICATOR))
+        // new script
+        {
+            string script = choiceTag.Substring(SCRIPT_INDICATOR.Length);
+            ScriptQueue.Remove(script);
+            LoadScriptFile(script);
 
-        searchTag = choiceTag;
-        paused = false;
+            StopCoroutine(gameCoroutine);
+            gameCoroutine = StartCoroutine(LoadScript());
+        }
+        else
+        // normal choice
+        {
+            playerChoices[choiceTag] = true;
+            HideChoices();
+
+            searchTag = choiceTag;
+            paused = false;
+        }
     }
 
     void HideChoices()

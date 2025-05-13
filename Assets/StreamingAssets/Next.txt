@@ -1,0 +1,13 @@
+This is the Next Script
+
+[CHOICE]
+three | four
+
+[THREE]
+choice 3
+
+[FOUR]
+choice 4
+
+[MERGE]
+fin.
