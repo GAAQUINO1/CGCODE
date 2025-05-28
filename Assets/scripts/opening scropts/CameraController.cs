@@ -40,17 +40,17 @@ public class CameraController : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftArrow)) // 🔥 Press Left Arrow to go to Left Monitor
+        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A)) // 🔥 Left Arrow or A
         {
             FocusOnMonitor("left");
         }
 
-        if (Input.GetKeyDown(KeyCode.RightArrow)) // 🔥 Press Right Arrow to go to Right Monitor
+        if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D)) // 🔥 Right Arrow or D
         {
             FocusOnMonitor("right");
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl)) // 🔥 Press Control to return to Default
+        if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.S)) // 🔥 Press Control to return to Default
         {
             ReturnToDefault();
         }
