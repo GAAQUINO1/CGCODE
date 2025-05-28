@@ -23,6 +23,10 @@ public class ChatController : MonoBehaviour
     private bool paused = true;
     private bool storyComplete = false;
 
+    // [siteIndex, scenarioNumber] => has the player seen this scenario post?
+    private bool[,] scenarioSeen = new bool[3, 3]; // [site count, max scenario count]
+
+
     public ScrollRect chatScrollRect;
 
     private string[] script;
@@ -38,8 +42,63 @@ public class ChatController : MonoBehaviour
     public Color systemColor = Color.green;
     public Color defaultColor = Color.white;
 
+    [Header("Scenario Story Controls")]
+    private Dictionary<(int site, int scenario), ScenarioStory> scenarioLookup = new();
+    public SmartPostButtonController[] siteControllers;
+
     void Start()
+
+
     {
+        PlayerPrefs.DeleteAll(); // ⚠️ Only use during testing
+
+        RegisterScenario(new ScenarioStory
+        {
+            label = "Scenario 1 YIKYAK",
+            fileName = "ChatScript_Site0_S1.txt",
+            siteIndex = 0,
+            scenarioNumber = 1
+        });
+        RegisterScenario(new ScenarioStory
+        {
+            label = "Scenario 2 YIKYAK",
+            fileName = "ChatScript_Site0_S2.txt",
+            siteIndex = 0,
+            scenarioNumber = 2
+        });
+
+        // BLOG (siteIndex = 1)
+        RegisterScenario(new ScenarioStory
+        {
+            label = "Scenario 1 BLOG",
+            fileName = "ChatScript_Site1_S1.txt",
+            siteIndex = 1,
+            scenarioNumber = 1
+        });
+        RegisterScenario(new ScenarioStory
+        {
+            label = "Scenario 2 BLOG",
+            fileName = "ChatScript_Site1_S2.txt",
+            siteIndex = 1,
+            scenarioNumber = 2
+        });
+
+        // REDDIT (siteIndex = 2)
+        RegisterScenario(new ScenarioStory
+        {
+            label = "Scenario 1 REDDIT",
+            fileName = "ChatScript_Site2_S1.txt",
+            siteIndex = 2,
+            scenarioNumber = 1
+        });
+        RegisterScenario(new ScenarioStory
+        {
+            label = "Scenario 2 REDDIT",
+            fileName = "ChatScript_Site2_S2.txt",
+            siteIndex = 2,
+            scenarioNumber = 2
+        });
+
         HideChoices();
 
         string filePath = Path.Combine(Application.streamingAssetsPath, chatFile);
@@ -55,6 +114,14 @@ public class ChatController : MonoBehaviour
         gameCoroutine = StartCoroutine(LoadScript());
     }
 
+    public void RegisterScenario(ScenarioStory story)
+    {
+        var key = (story.siteIndex, story.scenarioNumber);
+        if (!scenarioLookup.ContainsKey(key))
+            scenarioLookup[key] = story;
+    }
+
+
     public void StartChat()
     {
         if (!gameStarted)
@@ -63,6 +130,152 @@ public class ChatController : MonoBehaviour
             paused = false;
         }
     }
+
+    public void ShowAvailableStories()
+    {
+        Debug.Log("📢 Showing available scenario stories...");
+        // DEBUG — Print PlayerPrefs seen status
+        for (int s = 0; s < 3; s++)
+        {
+            for (int n = 1; n <= 2; n++)
+            {
+                int val = PlayerPrefs.GetInt($"ScenarioSeen_{s}_{n}", 0);
+                Debug.Log($"🧠 ScenarioSeen_{s}_{n} = {val}");
+            }
+        }
+
+        HideChoices();
+
+        int count = 0;
+        bool hasPlayable = false;
+
+        foreach (var story in scenarioLookup.Values)
+        {
+            int site = story.siteIndex;
+            int scenario = story.scenarioNumber;
+            int seen = PlayerPrefs.GetInt($"ScenarioSeen_{site}_{scenario}", 0);
+
+            bool alreadyPlayed = story.played;
+
+            // Scenario 1 can appear if seen and not already played
+            if (scenario == 1 && seen == 1 && !alreadyPlayed)
+            {
+                Debug.Log($"✅ S1 ready: {story.label}");
+                AddChoiceButton(story, ref count);
+                hasPlayable = true;
+            }
+
+            // Scenario 2 only appears if:
+            // - S1 was played
+            // - S2 post was seen
+            // - S2 not already played
+            else if (scenario == 2)
+            {
+                int s1Played = scenarioLookup[(site, 1)].played ? 1 : 0;
+                int s2Seen = PlayerPrefs.GetInt($"ScenarioSeen_{site}_2", 0);
+
+                if (s1Played == 1 && s2Seen == 1 && !alreadyPlayed)
+                {
+                    Debug.Log($"✅ S2 ready: {story.label}");
+                    AddChoiceButton(story, ref count);
+                    hasPlayable = true;
+                }
+                else
+                {
+                    Debug.Log($"❌ Skipping S2 for {story.label} — s1Played={s1Played}, s2Seen={s2Seen}, played={alreadyPlayed}");
+                }
+            }
+        }
+
+        if (!hasPlayable)
+        {
+            Debug.Log("🔒 No available scenarios to play. Hiding all buttons.");
+            HideChoices();
+        }
+    }
+
+
+
+    void AddChoiceButton(ScenarioStory story, ref int count)
+    {
+        if (story.played || count >= choiceButtons.Count) return;
+
+        var button = choiceButtons[count];
+        button.gameObject.SetActive(true);
+        Debug.Log($"🔘 Button {count} now assigned to: {story.label}");
+        button.onClick.RemoveAllListeners(); // 🔧 CLEAR OLD LISTENERS HERE
+        button.GetComponentInChildren<TextMeshProUGUI>().text = story.label;
+
+        string file = story.fileName;
+        int site = story.siteIndex;
+        int scenarioNum = story.scenarioNumber;
+
+        button.onClick.AddListener(() =>
+        {
+            story.played = true;
+            HideChoices();
+            StartCoroutine(PlayScenarioChat(file, site, scenarioNum));
+        });
+
+        ResizeButton(button);
+        count++;
+    }
+
+
+
+    IEnumerator PlayScenarioChat(string fileName, int siteIndex, int scenarioNum)
+    {
+        Debug.Log($"📖 Playing chat file: {fileName} from site {siteIndex}, scenario {scenarioNum}");
+
+        string path = Path.Combine(Application.streamingAssetsPath, fileName);
+        if (!File.Exists(path))
+        {
+            Debug.LogError($"❌ Missing scenario chat file: {path}");
+            yield break;
+        }
+
+        string[] lines = File.ReadAllLines(path);
+        foreach (var line in lines)
+        {
+            string trimmed = line.Trim();
+            if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith("//")) continue;
+            yield return StartCoroutine(DisplayMessage(trimmed));
+        }
+
+        Debug.Log($"✅ Finished scenario chat: {fileName}");
+        int nextScenario = scenarioNum + 1;
+
+        Debug.Log($"▶ Finished Scenario {scenarioNum} for site {siteIndex}. Will only unlock next scenario after proper post click.");
+
+
+
+        if (siteIndex < siteControllers.Length)
+        {
+            if (scenarioNum == 1)
+            {
+                siteControllers[siteIndex].LoadScenario(2); // move to Scenario 2
+            }
+            else if (scenarioNum == 2)
+            {
+                siteControllers[siteIndex].LoadEndPosts(); // move to END
+            }
+        }
+
+        Debug.Log($"🔄 Refreshing available scenario buttons...");
+        ShowAvailableStories();
+
+        // Just to confirm what keys are set after finishing this scenario
+        Debug.Log("🧠 Current PlayerPrefs after scenario finished:");
+        foreach (var key in new[] {
+        "ScenarioSeen_0_1", "ScenarioSeen_0_2",
+        "ScenarioSeen_1_1", "ScenarioSeen_1_2",
+        "ScenarioSeen_2_1", "ScenarioSeen_2_2"
+    })
+        {
+            Debug.Log($"🔑 {key} = {PlayerPrefs.GetInt(key, 0)}");
+        }
+    }
+
 
     private string GetSpeakerColorHex(string speaker)
     {
@@ -286,4 +499,49 @@ public class ChatController : MonoBehaviour
         float padding = 20f;
         buttonRect.sizeDelta = new Vector2(textComponent.preferredWidth + padding, textComponent.preferredHeight + padding);
     }
+
+    [System.Serializable]
+    public class ScenarioStory
+    {
+        public string label;
+        public string fileName;
+        public int siteIndex;
+        public int scenarioNumber;
+        public bool played = false;
+    }
+
+
+    public void MarkScenarioAsUnlocked(int siteIndex, int scenarioNumber)
+    {
+        string key = $"ScenarioSeen_{siteIndex}_{scenarioNumber}";
+        PlayerPrefs.SetInt(key, 1);
+        PlayerPrefs.Save();
+        Debug.Log($"🧠 Marked scenario seen: {key} = 1");
+
+        Debug.Log($"📢 All keys after update:");
+        foreach (var k in new[] { "ScenarioSeen_0_1", "ScenarioSeen_0_2", "ScenarioSeen_1_1", "ScenarioSeen_1_2", "ScenarioSeen_2_1", "ScenarioSeen_2_2" })
+        {
+            Debug.Log($"{k} = {PlayerPrefs.GetInt(k, 0)}");
+        }
+
+        ShowAvailableStories();
+    }
+
+
+    [ContextMenu("🔁 Reset All Scenario Progress")]
+    void ResetScenarioPrefs()
+    {
+        PlayerPrefs.DeleteAll();
+        PlayerPrefs.Save();
+        Debug.Log("🔁 All PlayerPrefs reset.");
+
+        foreach (var story in scenarioLookup.Values)
+        {
+            story.played = false;
+        }
+
+        ShowAvailableStories(); // Optional: refresh UI after reset
+    }
+
+
 }
