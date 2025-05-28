@@ -50,7 +50,7 @@ public class CameraController : MonoBehaviour
             FocusOnMonitor("right");
         }
 
-        if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.S)) // 🔥 Press Control to return to Default
+        if (Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.W)) // 🔥 Press Control to return to Default
         {
             ReturnToDefault();
         }
