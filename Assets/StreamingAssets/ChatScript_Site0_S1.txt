@@ -1,4 +1,279 @@
-site 0 1
+﻿System: FOR THREE MONTHS, YOU'VE BEEN HELPING OUT YOUR FRIEND IN HER PURSUIT OF HEROIC GOOD DEEDS
+System: TODAY IS A NEW DAY, WITH NEW REQUESTS AND STRANGE SITUATIONS TO UNTANGLE
+System: YOUR JOB IS TO HELP CLOUD GIRL OUT, BE A SUPPORTIVE VOICE IN HER EAR AND HELP MAKE HER WORK GO AS SMOOTHLY AS POSSIBLE. DO YOUR BEST TO FACILITATE HER GROWING NOTORIETY, BUT DON'T LET THE ATTENTION OVERWHELM. 
+System: BEGIN DAY? 
 
+[CHOICE] 
+Yes
 
-[END]
+[YES]
+System: INCOMING CALL FROM CLOUD GIRL
+Alfie: Bright and early, as always. Better answer before she gets worried.
+ 
+[CHOICE]
+Join Call
+
+[JOIN_CALL]
+System: YOU HAVE JOINED THE CALL
+Cloud Girl: Hey Alfie! 
+Cloud Girl: What’s on the docket for today?
+Alfie: Give me a second…
+Alfie: Only just woke up. 
+Cloud Girl: Don’t tell me you stayed up again last night! 
+Cloud Girl: Sleep is important.
+
+[CHOICE]
+I agree | Lots of things are important | Not to me
+
+[I_AGREE]
+Alfie: Got all eight hours.
+Cloud Girl: Hey, me too! Virtual high five!
+Alfie: Achievement unlocked, only two college students with a healthy sleep schedule. 
+
+[LOTS_OF_THINGS_ARE_IMPORTANT]
+Alfie: I got… enough sleep. 
+Cloud Girl: Alfie, you’ve got to try to get eight hours! It’s important. 
+Alfie: I’m pretty sure you’re the only person at this school who gets enough sleep, Cloud Girl. 
+
+[NOT_TO_ME]
+Alfie: Some things are more important. 
+Cloud Girl: We can disagree to agree on that!
+Alfie: That’s, wait, what?
+Cloud Girl: That’s why I need you on top of your game, Alfie! You have to be the person who’s three steps ahead. 
+Alfie: Agree to disagree, Cloud Girl. You don’t have to worry about me. 
+
+[MERGE]
+Cloud Girl: Okay, are there any new posts yet? 
+Cloud Girl: That’s always where we have the best luck. 
+Alfie: Let’s see…
+Cloud Girl: Oh, oh! I updated my information page. Isn’t it great?
+System: PRESS THE D OR > KEY TO LOOK AT CLOUD GIRL'S BLOG!
+
+[CHOICE]
+I like the bio | It is fine | The bio needs work
+
+[I_LIKE_THE_BIO]
+Alfie: It’s short and sweet and to the point. 
+Cloud Girl: Glad it’s working for you! 
+Cloud Girl: I went to a tutoring session to get help, said it was for a creative writing class. 
+Alfie: Isn’t that risky?
+Cloud Girl: Why would it be risky?
+Alfie: Aren’t you trying to keep things under wraps?
+Cloud Girl: Well, obviously. I wore my mask to the meeting, and I had a classmate sign up for it. 
+Alfie: Okay. That seems fine, actually.
+
+[IT_IS_FINE]
+Alfie: It’s certainly inspired. 
+Cloud Girl: Come on, Alfie! You know what you signed up for.
+Cloud Girl: Plus, I got help from a tutoring session. 
+Cloud Girl: That prose is the real deal!
+Alfie: Isn’t that risky?
+Cloud Girl: Why would it be risky?
+Alfie: Aren’t you trying to keep things under wraps?
+Cloud Girl: Well, obviously. I wore my mask to the meeting and I had a classmate sign up for it.
+Alfie: Alright, then.
+
+[THE_BIO_NEEDS_WORK]
+Alfie: We’ll keep revisiting as we settle into things. It’ll get there.
+Cloud Girl: Really? I thought I nailed it. Got help from a tutoring session and everything.
+Cloud Girl: That prose is the real deal!
+Alfie: Isn’t that risky?
+Cloud Girl: Why would it be risky?
+Alfie: Aren’t you trying to keep things under wraps?
+Cloud Girl: Well, obviously. I wore my mask to the meeting and had a classmate sign up for it.
+Alfie: That seems fine, I guess.
+
+[MERGE]
+Cloud Girl: But has anything been posted yet?
+Alfie: Looking.
+System: PRESS THE D OR > KEY TO LOOK AT VENT AND THREAD-IT FOR A NEW MISSION! 
+
+[CHOICE]
+I looked at social media
+
+[I_LOOKED_AT_SOCIAL_MEDIA]
+System: GOOD JOB!
+
+[CHOICE]
+Grocery Spill | 
+
+[GROCERY_SPILL]
+Cloud Girl: What are you thinking?
+
+[CHOICE]
+Decisive | Present Option
+
+[DECISIVE]
+Alfie: Alright, here's a good first task. 
+Cloud Girl: Lay it on me!
+Alfie: It looks like someone needs help taking their groceries back to their dorm. They just got off the bus and are stranded with too much to carry. 
+Cloud Girl: On it. What's their location?
+
+[PRESENT_OPTION]
+Alfie: Let me run a situation by you, see how you feel. 
+Cloud Girl: Sure, let’s feel things out first!
+Alfie: It looks like someone needs help taking their groceries back to their dorm. They just got off the bus and are stranded with too much to carry.
+Cloud Girl: That sounds pretty critical. We wouldn't want any frozen items to go bad. Looks like a job for Cloud Girl!
+Alfie: Roger that. We'll review the other requests after we're done with this. 
+Cloud Girl: Sounds good! What's their location?
+
+[MERGE]
+Alfie: Not far, it's the bus stop closest to you.
+Cloud Girl: Should I teleport in or keep things down-low?
+
+[CHOICE]
+Head there on foot | Teleport in
+
+[HEAD_THERE_ON_FOOT]
+Alfie: Keep things uneventful for now. We don't want to attract too much attention this early. 
+Cloud Girl: Got it.
+Alfie: Should I send out our usual active patrol announcement? 
+Cloud Girl: Definitely! I'm just getting started.
+System: BLOG UPDATED TO ACTIVE DUTY
+
+[TELEPORT_IN]
+Alfie: Might as well make a flashy entrance! That'll put you on the radar, but I'm sure they'll appreciate the quick help. 
+Cloud Girl: Got it. It'll take me two bursts, then I'll identify the targets.
+
+[MERGE]
+Cloud Girl: Oh! I think I see them!
+System: CUTSCENE TIME!
+
+[CHOICE]
+PLAY CUTSCENE
+
+[PLAY_CUTSCENE]
+[CUTSCENE:grocery]
+
+[MERGE]
+Alfie: That’s it?
+Cloud Girl: I'm all done! What's next?
+Alfie: Let me refresh everything, see what's changed.
+Cloud Girl: You know what would be cute? If I started carrying around reusable bags. The little ones, where they zip up all nice and then you pull them out to have a bag. 
+Alfie: You expect to be helping with a lot more people's grocery runs?
+Cloud Girl: Wouldn't hurt to be prepared! Plus, we could get cute custom-made cloud shaped ones. It would be on brand!
+
+[CHOICE]
+Like the idea | Hesitant about it | Think the idea is tacky
+
+[LIKE_THE_IDEA]
+Alfie: That's not a bad idea. Not something we could immediately set in motion, but I could look into some options.
+Cloud Girl: That's the Alfie I know!
+Alfie: Ha, okay, but don't get your hopes up. I can't promise anything.
+
+[HESITANT_ABOUT_IT]
+Alfie: Might be tricky, I don't exactly have Cloud Girl merch in the budget.
+Cloud Girl: We have a budget?
+Alfie: Exactly.
+
+[THINK_THE_IDEA_IS_TACKY]
+Alfie: Really? Branded merchandise already? Might be a bit tacky. 
+Cloud Girl: Maybe you're right. We can put merch aside for the moment. Revisit it later.
+Alfie: I'll put a pin in it.
+
+[MERGE]
+Cloud Girl: Find any new leads? Anything still outstanding? 
+System: System: PRESS THE D OR > KEY TO LOOK AT VENT AND THREAD-IT FOR A NEW MISSION! 
+
+[CHOICE]
+I looked at social media
+
+[I_LOOKED_AT_SOCIAL_MEDIA]
+System: GOOD JOB! 
+System: WHAT WOULD YOU LIKE TO SHARE WITH CLOUD GIRL?
+
+[CHOICE]
+Bicycle Theft | (wip) Laundry Crisis
+
+[BICYCLE_THEFT]
+Cloud Girl: What are you thinking?
+
+[CHOICE]
+Decisive | Present Option
+
+[DECISIVE]
+Alfie: Alright, here's a good first task. 
+Cloud Girl: Lay it on me! 
+Alfie: Someone's posted a lengthy request for help tracking down a stolen bike. 
+Cloud Girl: Sounds like a lot of work! I'm excited to do some investigating. 
+
+[PITCH]
+Alfie: Let me run a situation by you, see how you feel. 
+Cloud Girl: Sure, let's feel things out first! 
+Alfie: Someone's posted a lengthy request for help tracking down a stolen bike. 
+Cloud Girl: That sounds like a lot. You prepared to do some detective work? 
+Alfie: Most definitely. 
+Cloud Girl: Then let's get our detective caps on! 
+
+[MERGE] 
+Alfie: The post goes into detail about the type of bike, the last time they had it, and what leads they've got. 
+Cloud Girl: Break it down for me. 
+Alfie: The user says they forgot to put their lock on their bike one day before work, and when they left for the day, it was gone. 
+Cloud Girl: That's awful 
+Alfie: Yeah, ever since then, it's been a struggle for them to commute to their job. 
+Alfie: They also clarified they never filed a police report, so insurance isn't an option. 
+Alfie: They just want to know any leads on their bike. 
+Cloud Girl: How are we supposed to start looking for it? 
+Alfie: Someone in the comments says they saw a bike that matches that description near MacHenry Library. 
+Alfie: That's a good first place to start. 
+Cloud Girl: Alright, counting on you for navigation. 
+System: CUTSCENE TIME! 
+
+[CHOICE]
+Play Cutscene
+
+[PLAY_CUTSCENE]
+System: THE CUTSCENE IS NOT DONE YET. 
+System: JUST IMAGINE SOMETHING COOL. 
+System: NOW CLOUD GIRL NEEDS TO KNOW IF SHE SHOULD STEAL THE BIKE. OR WAIT.
+
+[MERGE]
+Cloud Girl: What's the gameplan? 
+
+[CHOICE]
+Take the bike | Stake out
+
+[TAKE_THE_BIKE]
+Alfie: Grab the bike. You're strong enough to break the lock, we can move it to another location and report back to the original post. 
+Cloud Girl: Isn't that stealing? 
+Alfie: Technically, stealing from another thief. 
+Cloud Girl: I suppose you're right. 
+System: CUTSCENE TIME! 
+
+[CHOICE]
+Play Cutscene
+
+[PLAY_CUTSCENE]
+SYSTEM: THIS IS THE THEFT CUTSCENE
+SYSTEM: CLOUD GIRL STEALS THE BIKE. 
+SYSTEM: AND THEN SHE RETURNS IT! HAPPY ENDING
+
+[MERGE]
+Alfie: You served up some proper justice right there. 
+Cloud Girl: That was awesome! I made that person's day. 
+Alfie: And the thief will get a taste of their own medicine. 
+
+[STAKE_OUT]
+Alfie: Let's figure out who took the bike first, catch them once they return. 
+Cloud Girl: Alright, a stake out! 
+Alfie: Best case scenario, our thief may be amenable to returning the bike. 
+
+[CHOICE]
+Play Cutscene
+
+[PLAY_CUTSCENE]
+SYSTEM: THIS IS THE CONFRONTATION CUTSCENE
+SYSTEM: CLOUD GIRL CONFRONTS THE THIEF. 
+SYSTEM: AND THEN SHE RETURNS THE BIKE! HAPPY ENDING
+
+[MERGE]
+Alfie: You served up some proper justice right there. 
+Cloud Girl: That was awesome! I made that person's day. 
+Alfie: And the thief will get a taste of their own medicine. 
+
+[MERGE]
+Cloud Girl: Find any new leads? Anything still outstanding? 
+Alfie: Let's do some digging.
+System: THANK YOU FOR PLAYTESTING SUPER CLOUD SOURCED!
+
+🏁 **ENDING: Cloud Girl's momentum WILL RETURN**

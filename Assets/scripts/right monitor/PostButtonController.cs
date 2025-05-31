@@ -178,6 +178,13 @@ public class SmartPostButtonController : MonoBehaviour
                 postButtons[safeIndex].triggerButton.onClick.AddListener(() =>
                 {
                     postDisplayImage.texture = safeTex;
+                    ScrollRect scrollRect = postDisplayImage.GetComponentInParent<ScrollRect>();
+                    if (scrollRect != null)
+                    {
+                        Canvas.ForceUpdateCanvases(); // Ensures layout is updated first
+                        scrollRect.verticalNormalizedPosition = 1f; // Scroll to top
+                    }
+
                     postDisplayImage.enabled = true;
                     buttonGroup.SetActive(false);
                     backButton.SetActive(true);
