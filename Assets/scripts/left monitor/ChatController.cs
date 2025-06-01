@@ -15,6 +15,8 @@ public class ChatController : MonoBehaviour
     public float letterDelay = 0.05f;
     public float choiceDelay = 0.5f;
 
+    private List<(int siteIndex, int scenarioNumber)> pendingUnlocks = new List<(int, int)>();
+
     public event System.Action OnStoryComplete;
 
     private Coroutine gameCoroutine;
@@ -35,6 +37,10 @@ public class ChatController : MonoBehaviour
 
     [Header("Chat File")]
     public string chatFile = "ChatScript.txt";
+
+    [Header("Audio Settings")]
+    public bool enableVoiceAudio = true;
+
 
     [Header("Speaker Colors (Set in Inspector)")]
     public Color alfieColor = Color.yellow;
@@ -279,6 +285,17 @@ public class ChatController : MonoBehaviour
                 storyComplete = true;
                 OnStoryComplete?.Invoke();
                 HideChoices();
+                PlayerPrefs.SetInt("IntroComplete", 1); // ✅ Mark intro as complete
+                PlayerPrefs.Save(); // Optional but recommended
+
+                // ✅ Handle any queued scenario unlocks
+                foreach (var unlock in pendingUnlocks)
+                {
+                    ApplyScenarioUnlock(unlock.siteIndex, unlock.scenarioNumber);
+                }
+                pendingUnlocks.Clear();
+
+
                 break;
             }
 
@@ -445,6 +462,12 @@ public class ChatController : MonoBehaviour
                 storyComplete = true;
                 OnStoryComplete?.Invoke();
                 HideChoices();
+                // ✅ Handle any queued scenario unlocks
+                foreach (var unlock in pendingUnlocks)
+                {
+                    ApplyScenarioUnlock(unlock.siteIndex, unlock.scenarioNumber);
+                }
+                pendingUnlocks.Clear();
                 break;
             }
             else if (string.IsNullOrWhiteSpace(line))
@@ -513,7 +536,7 @@ public class ChatController : MonoBehaviour
     IEnumerator DisplayMessage(string message)
     {
 
-        if (message.Contains(':'))
+        if (enableVoiceAudio && message.Contains(':'))
         {
             string[] parts = message.Split(new char[] { ':' }, 2);
             string speaker = parts[0].Trim();
@@ -522,7 +545,8 @@ public class ChatController : MonoBehaviour
 
         yield return StartCoroutine(TypeMessage(message));
 
-        while (!audioController.finished) yield return null;
+        if (enableVoiceAudio)
+            while (!audioController.finished) yield return null;
 
         yield return new WaitForSeconds(messageDelay);
     }
@@ -634,19 +658,27 @@ public class ChatController : MonoBehaviour
 
     public void MarkScenarioAsUnlocked(int siteIndex, int scenarioNumber)
     {
+        if (!storyComplete)
+        {
+            Debug.Log($"⏳ Deferring unlock of scenario {scenarioNumber} on site {siteIndex} until intro finishes.");
+            pendingUnlocks.Add((siteIndex, scenarioNumber));
+            return;
+        }
+
+        ApplyScenarioUnlock(siteIndex, scenarioNumber);
+    }
+
+    private void ApplyScenarioUnlock(int siteIndex, int scenarioNumber)
+    {
         string key = $"ScenarioSeen_{siteIndex}_{scenarioNumber}";
         PlayerPrefs.SetInt(key, 1);
         PlayerPrefs.Save();
-        Debug.Log($"🧠 Marked scenario seen: {key} = 1");
 
-        Debug.Log($"📢 All keys after update:");
-        foreach (var k in new[] { "ScenarioSeen_0_1", "ScenarioSeen_0_2", "ScenarioSeen_1_1", "ScenarioSeen_1_2", "ScenarioSeen_2_1", "ScenarioSeen_2_2" })
-        {
-            Debug.Log($"{k} = {PlayerPrefs.GetInt(k, 0)}");
-        }
+        Debug.Log($"🧠 Scenario marked as seen: {key} = 1");
 
         ShowAvailableStories();
     }
+
 
 
     [ContextMenu("🔁 Reset All Scenario Progress")]

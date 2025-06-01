@@ -40,28 +40,74 @@ public class SmartPostButtonController : MonoBehaviour
             originalTexture = postDisplayImage.texture;
         }
 
-        LoadScenario(1);
+        LoadScenarioInternal(1);
     }
+
+    private void LoadScenarioInternal(int scenarioNum)
+    {
+        Debug.Log($"📂 [Preload] Loading Scenario {scenarioNum} for {siteFolderName}");
+
+        string root = Path.Combine(Application.streamingAssetsPath, "SITES", siteFolderName, $"S{scenarioNum}");
+
+        List<string> scenarioPaths = scenarioNum == 1
+            ? GetImages(Path.Combine(root, "ScenarioPosts"))
+            : GetImages(Path.Combine(root, "ScenarioPosts"));
+
+        List<string> consequencePaths = scenarioNum == 2
+            ? GetImages(Path.Combine(root, "ConsequencePosts"))
+            : new List<string>();
+
+        List<string> randomPaths = GetImages(Path.Combine(root, "RandomPosts"));
+
+        List<string> selected = new();
+
+        if (scenarioPaths.Count > 0)
+        {
+            string selectedScenario = scenarioPaths.OrderBy(x => Random.value).First();
+            selected.Add(selectedScenario);
+        }
+
+        if (scenarioNum == 2 && consequencePaths.Count > 0)
+        {
+            int count = Random.Range(2, Mathf.Min(6, consequencePaths.Count + 1));
+            selected.AddRange(consequencePaths.OrderBy(x => Random.value).Take(count));
+        }
+
+        int needed = postButtons.Count - selected.Count;
+        if (randomPaths.Count > 0)
+        {
+            selected.AddRange(randomPaths.OrderBy(x => Random.value).Take(needed));
+        }
+
+        AssignPostsToButtons(selected.OrderBy(x => Random.value).ToList());
+    }
+
 
     public void LoadEndPosts()
     {
-        Debug.Log($"\ud83d\udcc2 Loading END posts for {siteFolderName}");
+        Debug.Log($"📂 Loading END posts for {siteFolderName}");
 
         string root = Path.Combine(Application.streamingAssetsPath, "SITES", siteFolderName, "END");
         List<string> imagePaths = GetImages(root);
 
         if (imagePaths.Count == 0)
-            Debug.LogWarning("\u26a0\ufe0f No END post images found.");
+            Debug.LogWarning("⚠️ No END post images found.");
 
         AssignPostsToButtons(imagePaths);
     }
 
     public void LoadScenario(int scenarioNum)
     {
-        Debug.Log($"\ud83d\udcc2 Loading Scenario {scenarioNum} for {siteFolderName}");
+        if (PlayerPrefs.GetInt("IntroComplete", 0) == 0)
+        {
+            Debug.LogWarning("⛔ Cannot load scenarios before intro is completed.");
+            return;
+        }
+
+        Debug.Log($"📂 Loading Scenario {scenarioNum} for {siteFolderName}");
 
         string root = Path.Combine(Application.streamingAssetsPath, "SITES", siteFolderName, $"S{scenarioNum}");
-        Debug.Log($"\ud83d\udcc1 Scenario root path: {root}");
+        Debug.Log($"📁 Scenario root path: {root}");
 
         List<string> scenarioPaths = new();
         List<string> consequencePaths = new();
@@ -79,36 +125,21 @@ public class SmartPostButtonController : MonoBehaviour
             randomPaths = GetImages(Path.Combine(root, "RandomPosts"));
         }
 
-        Debug.Log($"\ud83d\uddbc\ufe0f Scenario images found: {scenarioPaths.Count}");
-        Debug.Log($"\ud83c\udfb2 Random images found: {randomPaths.Count}");
-
         List<string> selected = new();
 
         string selectedScenario = scenarioPaths.OrderBy(x => Random.value).FirstOrDefault();
         if (selectedScenario != null)
-
-            Debug.Log($"🎯 Selected main scenario post: {selectedScenario}");  // ADD THIS
-
-        selected.Add(selectedScenario);
+        {
+            Debug.Log($"🎯 Selected main scenario post: {selectedScenario}");
+            selected.Add(selectedScenario);
+        }
 
         if (scenarioNum == 2 && consequencePaths.Count > 0)
         {
             int count = Random.Range(2, Mathf.Min(6, consequencePaths.Count + 1));
             var selectedConsequences = consequencePaths.OrderBy(x => Random.value).Take(count).ToList();
-
-            Debug.Log($"🎯 Selected {selectedConsequences.Count} consequence posts from {consequencePaths.Count} total.");
-            foreach (var con in selectedConsequences)
-            {
-                Debug.Log($"📌 Consequence selected: {Path.GetFileName(con)}");
-            }
-
             selected.AddRange(selectedConsequences);
         }
-        else if (scenarioNum == 2)
-        {
-            Debug.LogWarning("⚠️ Scenario 2: No consequence posts found.");
-        }
-
 
         int needed = postButtons.Count - selected.Count;
         if (randomPaths.Count > 0)
@@ -122,23 +153,24 @@ public class SmartPostButtonController : MonoBehaviour
 
     private List<string> GetImages(string path)
     {
-        Debug.Log($"\ud83d\udcc2 Looking for images in: {path}");
+        Debug.Log($"📂 Looking for images in: {path}");
+
 
         if (!Directory.Exists(path))
         {
-            Debug.LogWarning($"\u274c Directory not found: {path}");
+            Debug.LogWarning($"❌ Directory not found: {path}");
             return new List<string>();
         }
 
         string[] files = Directory.GetFiles(path, "*.png");
-        Debug.Log($"\ud83d\uddbc\ufe0f Found {files.Length} PNGs in {path}");
+
+        Debug.Log($"🖼️ Found images: {string.Join(", ", files)}");
 
         return files.ToList();
     }
 
     private void AssignPostsToButtons(List<string> imagePaths)
     {
-
         Debug.Log($"🧩 Assigning {imagePaths.Count} images to {postButtons.Count} buttons");
 
         for (int i = 0; i < postButtons.Count; i++)
@@ -146,14 +178,11 @@ public class SmartPostButtonController : MonoBehaviour
             if (i < imagePaths.Count)
             {
                 string imagePath = imagePaths[i];
-
-                Debug.Log($"🔗 Assigning to button {i}: {imagePath}");  // ADD THIS LINE
-
                 Texture2D tex = LoadTexture(imagePath);
 
                 if (tex == null)
                 {
-                    Debug.LogError($"\u274c Failed to load texture at: {imagePath}");
+                    Debug.LogError($"❌ Failed to load texture at: {imagePath}");
                     postButtons[i].triggerButton.gameObject.SetActive(false);
                     continue;
                 }
@@ -166,7 +195,6 @@ public class SmartPostButtonController : MonoBehaviour
                     postButtons[i].label.fontSizeMin = 10;
                     postButtons[i].label.fontSizeMax = 24;
                     postButtons[i].label.overflowMode = TextOverflowModes.Ellipsis;
-                    Debug.Log($"\ud83d\udcdd Button {i} label set to: {fileName}");
                 }
 
                 int safeIndex = i;
@@ -178,45 +206,42 @@ public class SmartPostButtonController : MonoBehaviour
                 postButtons[safeIndex].triggerButton.onClick.AddListener(() =>
                 {
                     postDisplayImage.texture = safeTex;
-                    ScrollRect scrollRect = postDisplayImage.GetComponentInParent<ScrollRect>();
-                    if (scrollRect != null)
-                    {
-                        Canvas.ForceUpdateCanvases(); // Ensures layout is updated first
-                        scrollRect.verticalNormalizedPosition = 1f; // Scroll to top
-                    }
-
                     postDisplayImage.enabled = true;
                     buttonGroup.SetActive(false);
                     backButton.SetActive(true);
 
+                    if (siteFolderName == "YikYak")
+                    {
+                        postDisplayImage.rectTransform.sizeDelta = new Vector2(183, 180);
+
+                        RectTransform contentRect = postDisplayImage.transform.parent.GetComponent<RectTransform>();
+                        if (contentRect != null)
+                        {
+                            contentRect.sizeDelta = new Vector2(contentRect.sizeDelta.x, 180); // enough to avoid scroll gap
+                        }
+                    }
+
+                    ScrollRect scrollRect = postDisplayImage.GetComponentInParent<ScrollRect>();
+                    if (scrollRect != null)
+                    {
+                        Canvas.ForceUpdateCanvases();
+                        scrollRect.verticalNormalizedPosition = 1f;
+                    }
+
                     if (safePath.Contains("ScenarioPosts") && chatController != null)
                     {
-                        Debug.Log($"🧪 Path check: {safePath}");
-
-                        // Normalize slashes to avoid Windows/Linux path differences
                         string normalizedPath = safePath.Replace("\\", "/").ToLower();
                         bool isS1 = normalizedPath.Contains("/s1/scenarioposts");
                         bool isS2 = normalizedPath.Contains("/s2/scenarioposts");
-
-                        Debug.Log($"🧪 isS1: {isS1} | isS2: {isS2}");
 
                         int scenarioNum = isS1 ? 1 : isS2 ? 2 : -1;
 
                         if (scenarioNum != -1)
                         {
-                            Debug.Log($"📌 Scenario post viewed. Telling ChatController: site {siteIndex}, scenario {scenarioNum}");
                             chatController.MarkScenarioAsUnlocked(siteIndex, scenarioNum);
                         }
-                        else
-                        {
-                            Debug.LogWarning($"❗ Unexpected path, did not mark any scenario as unlocked: {safePath}");
-                        }
-                        Debug.Log($"📌 Scenario post viewed. Telling ChatController: site {siteIndex}, scenario {scenarioNum}");
-                        chatController.MarkScenarioAsUnlocked(siteIndex, scenarioNum);
                     }
                 });
-
-                Debug.Log($"\u2705 Button {i} assigned to image: {Path.GetFileName(imagePath)}");
             }
             else
             {
@@ -234,10 +259,18 @@ public class SmartPostButtonController : MonoBehaviour
                 postDisplayImage.enabled = true;
                 buttonGroup.SetActive(true);
                 backButton.SetActive(false);
+
+                if (siteFolderName == "YikYak")
+                {
+                    postDisplayImage.rectTransform.sizeDelta = new Vector2(183, 740);
+                    RectTransform contentRect = postDisplayImage.transform.parent.GetComponent<RectTransform>();
+                    if (contentRect != null)
+                    {
+                        contentRect.sizeDelta = new Vector2(contentRect.sizeDelta.x, 740);
+                    }
+                }
             });
         }
-
-        Debug.Log($"\ud83d\udccb Total posts assigned to buttons: {imagePaths.Count}");
     }
 
     private Texture2D LoadTexture(string filePath)
