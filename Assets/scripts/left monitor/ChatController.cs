@@ -46,10 +46,14 @@ public class ChatController : MonoBehaviour
     private Dictionary<(int site, int scenario), ScenarioStory> scenarioLookup = new();
     public SmartPostButtonController[] siteControllers;
 
+    private AudioController audioController;
+    private Dictionary<string, int> audioKeys = new();
+
     void Start()
-
-
     {
+        // personalized audio controller
+        audioController = gameObject.AddComponent<AudioController>();
+
         PlayerPrefs.DeleteAll(); // ⚠️ Only use during testing
 
         RegisterScenario(new ScenarioStory
@@ -307,6 +311,22 @@ public class ChatController : MonoBehaviour
 
             Debug.Log($"📜 Processing line: {line}");
 
+            if (!line.StartsWith("[") && line.Contains(":"))
+            {
+                // keep audio indexing per line passed
+                string[] parts = line.Split(new char[] { ':' }, 2);
+                string speaker = parts[0].Trim();
+
+                if (audioKeys.ContainsKey(speaker))
+                {
+                    audioKeys[speaker] += 1;
+                }
+                else
+                {
+                    audioKeys[speaker] = 1;
+                }
+            }
+
             if (line.StartsWith("[CUTSCENE:"))
             {
                 string cutsceneName = line.Substring(10, line.Length - 11);
@@ -329,8 +349,7 @@ public class ChatController : MonoBehaviour
                 printingText = true;
                 continue;
             }
-
-            if (line == "[END]")
+            else if (line == "[END]")
             {
                 storyComplete = true;
                 OnStoryComplete?.Invoke();
@@ -402,7 +421,18 @@ public class ChatController : MonoBehaviour
 
     IEnumerator DisplayMessage(string message)
     {
+
+        if (message.Contains(':'))
+        {
+            string[] parts = message.Split(new char[] { ':' }, 2);
+            string speaker = parts[0].Trim();
+            audioController.ReadLine(speaker.ToLower().Replace(" ", ""), audioKeys[speaker]);
+        }
+
         yield return StartCoroutine(TypeMessage(message));
+
+        while (!audioController.finished) yield return null;
+
         yield return new WaitForSeconds(messageDelay);
     }
 
