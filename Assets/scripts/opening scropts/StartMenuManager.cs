@@ -39,13 +39,21 @@ public class StartMenuManager : MonoBehaviour
 
     void Update()
     {
-        // Reset scene if R is pressed
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Debug.Log("🔄 Resetting the game...");
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            if (startMenuCanvas.activeSelf)
+            {
+                startMenuCanvas.SetActive(false);
+                Time.timeScale = 1f; // Unpause
+            }
+            else
+            {
+                startMenuCanvas.SetActive(true);
+                Time.timeScale = 0f; // Pause game
+            }
         }
     }
+
 
     public void StartGame()
     {

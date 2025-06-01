@@ -224,9 +224,6 @@ public class ChatController : MonoBehaviour
         ResizeButton(button);
         count++;
     }
-
-
-
     IEnumerator PlayScenarioChat(string fileName, int siteIndex, int scenarioNum)
     {
         Debug.Log($"📖 Playing chat file: {fileName} from site {siteIndex}, scenario {scenarioNum}");
@@ -239,46 +236,140 @@ public class ChatController : MonoBehaviour
         }
 
         string[] lines = File.ReadAllLines(path);
-        foreach (var line in lines)
+        bool isChoiceSection = false;
+        int seeking = 0;
+        string currentTag = "";
+        Dictionary<string, List<string>> branches = new();
+        List<(string text, string tag)> choices = new();
+
+        CutsceneManager cutsceneManager = FindObjectOfType<CutsceneManager>();
+
+        for (int i = 0; i < lines.Length; i++)
         {
-            string trimmed = line.Trim();
-            if (string.IsNullOrEmpty(trimmed) || trimmed.StartsWith("//")) continue;
-            yield return StartCoroutine(DisplayMessage(trimmed));
+            string line = lines[i].Trim();
+            if (string.IsNullOrEmpty(line) || line.StartsWith("//")) continue;
+            while (paused) yield return null;
+
+            Debug.Log($"📜 Scenario Line: {line}");
+
+            // Cutscene support
+            if (line.StartsWith("[CUTSCENE:"))
+            {
+                string cutsceneName = line.Substring(10, line.Length - 11);
+                Debug.Log($"🎬 Triggering cutscene: {cutsceneName}");
+
+                paused = true;
+                bool cutsceneFinished = false;
+
+                cutsceneManager.PlayCutscene(cutsceneName, () =>
+                {
+                    cutsceneFinished = true;
+                    paused = false;
+                });
+
+                while (!cutsceneFinished)
+                    yield return null;
+
+                continue;
+            }
+
+            // End of chat
+            if (line == "[END]")
+            {
+                storyComplete = true;
+                OnStoryComplete?.Invoke();
+                HideChoices();
+                break;
+            }
+
+            // Handle CHOICE section
+            if (line == "[CHOICE]")
+            {
+                isChoiceSection = true;
+                seeking++;
+                continue;
+            }
+
+            if (isChoiceSection && !line.StartsWith("[") && line.Contains("|"))
+            {
+                string[] parts = line.Split('|');
+                foreach (var part in parts)
+                {
+                    string clean = part.Trim();
+                    string tag = clean.ToUpper().Replace(" ", "_");
+                    choices.Add((clean, tag));
+                }
+
+                ShowChoices(choices);
+                paused = true;
+                while (paused) yield return null;
+                isChoiceSection = false;
+                continue;
+            }
+
+            if (isChoiceSection && line.StartsWith("[") && line.EndsWith("]"))
+            {
+                currentTag = line.Trim('[', ']');
+                branches[currentTag] = new List<string>();
+                continue;
+            }
+
+            if (!string.IsNullOrEmpty(currentTag) && branches.ContainsKey(currentTag))
+            {
+                branches[currentTag].Add(line);
+                continue;
+            }
+
+            if (line == "[MERGE]")
+            {
+                seeking--;
+                continue;
+            }
+
+            // Tag filtering (e.g., [I_AGREE|NOT_TO_ME])
+            if (line.StartsWith("[") && line.EndsWith("]"))
+            {
+                string[] tags = line.Trim('[', ']').Split('|');
+                if (tags.Any(tag => tag == searchTag))
+                {
+                    searchTag = "";
+                    continue;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            // Normal dialogue
+            yield return StartCoroutine(DisplayMessage(line));
+        }
+
+        // Play chosen branch if it exists
+        if (!string.IsNullOrEmpty(searchTag) && branches.TryGetValue(searchTag, out var branchLines))
+        {
+            foreach (var msg in branchLines)
+            {
+                yield return StartCoroutine(DisplayMessage(msg));
+            }
         }
 
         Debug.Log($"✅ Finished scenario chat: {fileName}");
-        int nextScenario = scenarioNum + 1;
 
-        Debug.Log($"▶ Finished Scenario {scenarioNum} for site {siteIndex}. Will only unlock next scenario after proper post click.");
-
-
-
+        // Unlock next content
         if (siteIndex < siteControllers.Length)
         {
             if (scenarioNum == 1)
-            {
-                siteControllers[siteIndex].LoadScenario(2); // move to Scenario 2
-            }
+                siteControllers[siteIndex].LoadScenario(2);
             else if (scenarioNum == 2)
-            {
-                siteControllers[siteIndex].LoadEndPosts(); // move to END
-            }
+                siteControllers[siteIndex].LoadEndPosts();
         }
 
-        Debug.Log($"🔄 Refreshing available scenario buttons...");
         ShowAvailableStories();
-
-        // Just to confirm what keys are set after finishing this scenario
-        Debug.Log("🧠 Current PlayerPrefs after scenario finished:");
-        foreach (var key in new[] {
-        "ScenarioSeen_0_1", "ScenarioSeen_0_2",
-        "ScenarioSeen_1_1", "ScenarioSeen_1_2",
-        "ScenarioSeen_2_1", "ScenarioSeen_2_2"
-    })
-        {
-            Debug.Log($"🔑 {key} = {PlayerPrefs.GetInt(key, 0)}");
-        }
     }
+
+
+
 
 
     private string GetSpeakerColorHex(string speaker)
