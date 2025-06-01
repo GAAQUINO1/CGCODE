@@ -3,6 +3,14 @@ using System.Collections;
 
 public class CameraController : MonoBehaviour
 {
+
+    public enum ViewState { Default, LeftMonitor, RightMonitor }
+
+    private ViewState currentView = ViewState.Default;
+
+    public ViewState CurrentView => currentView; // Add this public getter
+
+
     public Transform startPosition, defaultPosition, leftMonitorPos, rightMonitorPos;
     public float moveDuration = 2f;
     private bool isInteracting = false;
@@ -66,8 +74,8 @@ public class CameraController : MonoBehaviour
         if (monitor == "left")
         {
             target = leftMonitorPos;
+            currentView = ViewState.LeftMonitor; // ✅ Add this
 
-            // 🔥 Move the camera first, then start chat AFTER the movement finishes
             LeanTween.move(gameObject, target.position, 0.5f).setEase(LeanTweenType.easeInOutQuad);
             LeanTween.rotate(gameObject, target.rotation.eulerAngles, 0.5f).setEase(LeanTweenType.easeInOutQuad)
                 .setOnComplete(() =>
@@ -80,9 +88,12 @@ public class CameraController : MonoBehaviour
                     }
                 });
         }
+
         else if (monitor == "right")
         {
             target = rightMonitorPos;
+            currentView = ViewState.RightMonitor; // ✅ Add this
+
             LeanTween.move(gameObject, target.position, 0.5f).setEase(LeanTweenType.easeInOutQuad);
             LeanTween.rotate(gameObject, target.rotation.eulerAngles, 0.5f).setEase(LeanTweenType.easeInOutQuad)
                 .setOnComplete(() => isInteracting = false);
@@ -92,6 +103,8 @@ public class CameraController : MonoBehaviour
     void ReturnToDefault()
     {
         if (!allowExit) return;
+
+        currentView = ViewState.Default; // ✅ Add this
 
         LeanTween.move(gameObject, defaultPosition.position, 0.5f).setEase(LeanTweenType.easeInOutQuad);
         LeanTween.rotate(gameObject, defaultPosition.rotation.eulerAngles, 0.5f).setEase(LeanTweenType.easeInOutQuad);
