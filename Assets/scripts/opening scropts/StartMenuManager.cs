@@ -4,37 +4,56 @@ using UnityEngine.SceneManagement;
 
 public class StartMenuManager : MonoBehaviour
 {
+    [Header("Menu Screens")]
     public GameObject menuScreen_Main;
     public GameObject menuScreen_Controls;
     public GameObject menuScreen_Credits;
+    public GameObject MenuScreen_Gallery;
+
+    [Header("Game + UI References")]
     public GameObject backButton;
-    public GameObject startupController;  // chair animation, chat system, camera logic
+    public GameObject startupController;
     public GameObject startMenuCanvas;
 
+    [Header("Menu Buttons")]
     public Button startButton;
     public Button controlsButton;
     public Button creditsButton;
+    public Button galleryButton;
     public Button backButtonComponent;
+
+    [Header("Gallery UI")]
+    public Button leftArrowButton;
+    public Button rightArrowButton;
+    public Image artDisplay;                // Now using Image instead of RawImage
+    public Sprite[] galleryArtImages;       // Now using Sprite instead of Texture
+    private int currentImageIndex = 0;
 
     void Start()
     {
-        // Start paused
+        // Pause the game
         Time.timeScale = 0f;
 
         // Show only main menu
         menuScreen_Main.SetActive(true);
         menuScreen_Controls.SetActive(false);
         menuScreen_Credits.SetActive(false);
+        MenuScreen_Gallery.SetActive(false);
         backButton.SetActive(false);
 
-        // Block gameplay
+        // Block gameplay systems
         startupController.SetActive(false);
 
-        // Assign button actions
+        // Assign main menu button actions
         startButton.onClick.AddListener(StartGame);
         controlsButton.onClick.AddListener(ShowControls);
         creditsButton.onClick.AddListener(ShowCredits);
+        galleryButton.onClick.AddListener(ShowGallery);
         backButtonComponent.onClick.AddListener(ShowMainMenu);
+
+        // Assign gallery arrows
+        leftArrowButton.onClick.AddListener(ShowPreviousImage);
+        rightArrowButton.onClick.AddListener(ShowNextImage);
     }
 
     void Update()
@@ -54,7 +73,6 @@ public class StartMenuManager : MonoBehaviour
         }
     }
 
-
     public void StartGame()
     {
         Time.timeScale = 1f;
@@ -67,6 +85,7 @@ public class StartMenuManager : MonoBehaviour
         menuScreen_Main.SetActive(false);
         menuScreen_Controls.SetActive(true);
         menuScreen_Credits.SetActive(false);
+        MenuScreen_Gallery.SetActive(false);
         backButton.SetActive(true);
     }
 
@@ -75,6 +94,7 @@ public class StartMenuManager : MonoBehaviour
         menuScreen_Main.SetActive(false);
         menuScreen_Controls.SetActive(false);
         menuScreen_Credits.SetActive(true);
+        MenuScreen_Gallery.SetActive(false);
         backButton.SetActive(true);
     }
 
@@ -83,6 +103,47 @@ public class StartMenuManager : MonoBehaviour
         menuScreen_Main.SetActive(true);
         menuScreen_Controls.SetActive(false);
         menuScreen_Credits.SetActive(false);
+        MenuScreen_Gallery.SetActive(false);
         backButton.SetActive(false);
+    }
+
+    public void ShowGallery()
+    {
+        MenuScreen_Gallery.SetActive(true);
+        menuScreen_Main.SetActive(false);
+        menuScreen_Controls.SetActive(false);
+        menuScreen_Credits.SetActive(false);
+        backButton.SetActive(true);
+
+        if (galleryArtImages.Length > 0)
+        {
+            currentImageIndex = 0;
+            artDisplay.sprite = galleryArtImages[0];
+            artDisplay.preserveAspect = true;
+        }
+    }
+
+    void ShowPreviousImage()
+    {
+        if (galleryArtImages.Length == 0) return;
+
+        currentImageIndex--;
+        if (currentImageIndex < 0)
+            currentImageIndex = galleryArtImages.Length - 1;
+
+        artDisplay.sprite = galleryArtImages[currentImageIndex];
+        artDisplay.preserveAspect = true;
+    }
+
+    void ShowNextImage()
+    {
+        if (galleryArtImages.Length == 0) return;
+
+        currentImageIndex++;
+        if (currentImageIndex >= galleryArtImages.Length)
+            currentImageIndex = 0;
+
+        artDisplay.sprite = galleryArtImages[currentImageIndex];
+        artDisplay.preserveAspect = true;
     }
 }

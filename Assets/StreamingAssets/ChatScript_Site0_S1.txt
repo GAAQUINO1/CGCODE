@@ -1,21 +1,30 @@
-﻿s1
-s1
+﻿Alfie: We pay for this guy's laundry and he still complains. 
+Cloud Girl: A little extra cash is no price to pay for Cloud Girl! 
 
-System: FOR THREE MONTHS, YOU'VE BEEN HELPING OUT YOUR FRIEND IN HER PURSUIT OF HEROIC GOOD DEEDS
-System: TODAY IS A NEW DAY, WITH NEW REQUESTS AND STRANGE SITUATIONS TO UNTANGLE
-System: YOUR JOB IS TO HELP CLOUD GIRL OUT, BE A SUPPORTIVE VOICE IN HER EAR AND HELP MAKE HER WORK GO AS SMOOTHLY AS POSSIBLE. DO YOUR BEST TO FACILITATE HER GROWING NOTORIETY, BUT DON'T LET THE ATTENTION OVERWHELM. 
-System: BEGIN DAY? 
+[CHOICE]
+I paid the price | Laundry should be free | Donation time
 
-[CHOICE] 
-Yes
+[I_PAID_THE_PRICE]
+APPLE
 
-[YES]
-System: INCOMING CALL FROM CLOUD GIRL
-Alfie: Bright and early, as always. Better answer before she gets worried.
+[LAUNDRY_SHOULD_BE_FREE]
+BAMMAM
+
+[DONATION_TIME]
+LASFKLJ
 
 [MERGE]
-Cloud Girl: I know we've only done one mission, but I'm already feeling on a roll!
-Alfie: Let's see if I can keep your streak going.
+1
+[CUTSCENE:grocery]
+Cloud Girl: Find any new leads? Anything still outstanding? 
+Alfie: Let's do some digging.
 System: THANK YOU FOR PLAYTESTING SUPER CLOUD SOURCED!
-🏁 **ENDING: Cloud Girl's momentum WILL RETURN**
+
+[MERGE]
+2
+[CUTSCENE:grocery]
+Cloud Girl: Find any new leads? Anything still outstanding? 
+Alfie: Let's do some digging.
+System: THANK YOU FOR PLAYTESTING SUPER CLOUD SOURCED!
+
 [END]

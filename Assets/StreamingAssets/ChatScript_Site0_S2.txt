@@ -1,3 +1,136 @@
-site 0 2
+﻿Cloud Girl: What are you thinking? 
 
-[END]
+[CHOICE]
+Decide Post | Pitch Option
+
+[DECIDE_POST]
+Alfie: Oh damn, someone's dealing with a faulty dryer and no time to get to class. 
+Cloud Girl: There's no time to waste. What's the location. 
+
+[PITCH_OPTION]
+Alfie: It looks like someone's going to be late to class on account of a dryer malfunction. 
+Cloud Girl: Oh no! We've got to help them ASAP. Can you figure out the location? 
+
+[MERGE]
+Alfie: From the context clues and what I could find from their other posts on ASAP. Can you figure out the location? 
+Cloud Girl: I can teleport there in no time at all. Hold, please! 
+Cloud Girl: Alright, I've got the laundry room in my sights. 
+Alfie: Do you see someone who fits the description? 
+Cloud Girl: Yeah, there's someone looking about ready to kick the dryer. Probably our guy. 
+Alfie: Perfect. 
+Cloud Girl: How do you think I should go about this? I'm sure anyone would be skeptical to trust someone else with their property. 
+
+[CHOICE]
+Be Cloud Girl | Be down to earth | Be yourself 
+
+[BE_CLOUD_GIRL]
+Alfie: You're Cloud Girl! Lean in. 
+Cloud Girl: That's nothing to be worried about, not when I'm here. 
+Alfie: And I'm here if you need any additional backup.
+
+[CHOICE]
+Play Cutscene | 
+
+[PLAY_CUTSCENE]
+[CUTSCENE:laundrySelf]
+SYSTEM: THIS IS ONE OF THREE SLIGHT VARIATIONS OF THE LAUNDRY CUTSCENE
+SYSTEM: IT ENDS WITH CLOUD GIRL PAYING THE DRYER FEE
+
+[BE_DOWN_TO_EARTH]
+Alfie: We did essentially cyber-stalk this person to try and help their laundry. Maybe go for the relatable approach? 
+Cloud Girl: Relatable... Yeah! This could happen to anyone. Even Cloud Girl. 
+Alfie: I'll be here in case the relatable proves difficult. 
+Cloud Girl: Hey. I'm extremely down to earth. 
+Alfie: Alright then, prove it. 
+
+[CHOICE]
+Play Cutscene | 
+
+[PLAY_CUTSCENE]
+[CUTSCENE:laundryRelate]
+SYSTEM: THIS IS ONE OF THREE SLIGHT VARATIONS OF THE LAUNDRY CUTSCENE
+SYSTEM: IT ENDS WITH CLOUD GIRL PAYING THE DRYER FEE
+
+[BE_YOURSELF]
+Alfie: Be yourself. 
+Cloud Girl: Like, my alter-ego? Or are we going for the angle where Cloud Girl shrunk her coat in the wash. 
+Alfie: Alter-ego. I mean, we're all human. Cloud Girl, she's a symbol. That doesn't always work. 
+Cloud Girl: If you're sure. 
+Alfie: Remember that time you managed to put a pen in your laundry? 
+Cloud Girl: I did not put a pen in the laundry. I forgot that I had it in my pocket. And I am still finding ink stains on my clothes.
+Alfie: See? Their laundry issues could be worse. They could be you. 
+Cloud Girl: After I'm done here, I'm sneaking some ink cartridges into your socks. See how you like that. 
+Alfie: It'll be my noble duty to inform the world of your turn to evil. 
+Cloud Girl: Shush, you. I'm heading in. 
+
+[CHOICE]
+Play Cutscene | 
+
+[PLAY_CUTSCENE]
+[CUTSCENE:laundryYOU]
+SYSTEM: THIS IS ONE OF THREE SLIGHT VARATIONS OF THE LAUNDRY CUTSCENE
+SYSTEM: IT ENDS WITH CLOUD GIRL PAYING THE DRYER FEE
+
+[MERGE]
+Alfie: How's that laundry? 
+Cloud Girl: It's definitely looking dryer. 
+Alfie: We can only hope. 
+Cloud Girl: Think I can get you in the wig and costume one of these days? 
+Cloud Girl: Don't get me wrong, I love helping folks, but staying put in one room is drying me crazy. 
+Alfie: No. 
+Cloud Girl: What? I don't have lice.
+Alfie: You do have puns, and I'm far more worried about how infectious those may be. 
+Cloud Girl: Come on, I know you'll warm up to the idea... Just like this laundry is. 
+Alfie: I'm muting the call. 
+
+[CHOICE]
+Play Cutscene | 
+
+[PLAY_CUTSCENE]
+[CUTSCENE:laundryEND]
+SYSTEM: THIS WRAPS UP THE LAUNDRY SCENARIO
+SYSTEM: THE STUDENT IS SHOCKED THAT CLOUD GIRL STAYED
+SYSTEM: HAPPY ENDING! 
+
+[MERGE]
+Alfie: We pay for this guy's laundry and he still complains. 
+Cloud Girl: A little extra cash is no price to pay for Cloud Girl! 
+
+[CHOICE]
+I paid the price | Laundry should be free | Donation time
+
+[I_PAID_THE_PRICE]
+Alfie: Okay, but that's conveniently forgetting how I paid for it. 
+Cloud Girl: We're a team! We both are putting our resources towards the good of this community. 
+Alfie: I'd tell you to get a job, but this is your job. 
+Alfie: At least tell me you're going to add this to your resume as community service hours? 
+Cloud Girl: If you can figure out a way I can do it without revealing my identity, I'll consider it. 
+Alfie: What am I saying. You don't even have a resume!
+Cloud Girl: I take pride in my alter ego's mundanity, alright? 
+Alfie: I say this with kindness. You should be extremely proud. 
+Cloud Girl: Thanks!
+
+[LAUNDRY_SHOULD_BE_FREE]
+Alfie: Absolutely absurd to have to pay for laundry on the college campus you're paying to live on. 
+Cloud Girl: Some things are simply out of my control as a hero. 
+Alfie: That's the true injustice. We got to power you up to fight against the evils of laundromats everywhere. 
+Cloud Girl: Sounds like a plan to me! 
+
+[DONATION_TIME]
+Alfie: I think we're going to need to consider some way of getting money to support all this. 
+Cloud Girl: I'm not sure if that's a good idea. What if people try to bribe me? 
+Alfie: We'd figure out how to frame it correctly. 
+Alfie: Make it an option for people to support you, no strings involved. 
+Cloud Girl: I'll think about it. 
+
+[MERGE]
+Alfie: Up for another mission? 
+Cloud Girl: As long as it's laundry free, I'm game for whatever you can throw at me. 
+Alfie: Challenge accepted.
+
+[MERGE]
+Cloud Girl: Find any new leads? Anything still outstanding? 
+Alfie: Let's do some digging.
+System: THANK YOU FOR PLAYTESTING SUPER CLOUD SOURCED!
+
+🏁 **ENDING: Cloud Girl's momentum WILL RETURN**

@@ -241,139 +241,20 @@ public class ChatController : MonoBehaviour
             yield break;
         }
 
-        string[] lines = File.ReadAllLines(path);
-        bool isChoiceSection = false;
-        int seeking = 0;
-        string currentTag = "";
-        Dictionary<string, List<string>> branches = new();
-        List<(string text, string tag)> choices = new();
+        string[] scenarioScript = File.ReadAllLines(path);
 
-        CutsceneManager cutsceneManager = FindObjectOfType<CutsceneManager>();
+        yield return StartCoroutine(LoadScript(scenarioScript)); // ✅ Reuse intro parsing logic
 
-        for (int i = 0; i < lines.Length; i++)
-        {
-            string line = lines[i].Trim();
-            if (string.IsNullOrEmpty(line) || line.StartsWith("//")) continue;
-            while (paused) yield return null;
+        // ✅ After the story finishes
+        storyComplete = true;
+        PlayerPrefs.SetInt("IntroComplete", 1);
+        PlayerPrefs.Save();
 
-            Debug.Log($"📜 Scenario Line: {line}");
+        foreach (var unlock in pendingUnlocks)
+            ApplyScenarioUnlock(unlock.siteIndex, unlock.scenarioNumber);
+        pendingUnlocks.Clear();
 
-            // Cutscene support
-            if (line.StartsWith("[CUTSCENE:"))
-            {
-                string cutsceneName = line.Substring(10, line.Length - 11);
-                Debug.Log($"🎬 Triggering cutscene: {cutsceneName}");
-
-                paused = true;
-                bool cutsceneFinished = false;
-
-                cutsceneManager.PlayCutscene(cutsceneName, () =>
-                {
-                    cutsceneFinished = true;
-                    paused = false;
-                });
-
-                while (!cutsceneFinished)
-                    yield return null;
-
-                continue;
-            }
-
-            // End of chat
-            if (line == "[END]")
-            {
-                storyComplete = true;
-                OnStoryComplete?.Invoke();
-                HideChoices();
-                PlayerPrefs.SetInt("IntroComplete", 1); // ✅ Mark intro as complete
-                PlayerPrefs.Save(); // Optional but recommended
-
-                // ✅ Handle any queued scenario unlocks
-                foreach (var unlock in pendingUnlocks)
-                {
-                    ApplyScenarioUnlock(unlock.siteIndex, unlock.scenarioNumber);
-                }
-                pendingUnlocks.Clear();
-
-
-                break;
-            }
-
-            // Handle CHOICE section
-            if (line == "[CHOICE]")
-            {
-                isChoiceSection = true;
-                seeking++;
-                continue;
-            }
-
-            if (isChoiceSection && !line.StartsWith("[") && line.Contains("|"))
-            {
-                string[] parts = line.Split('|');
-                foreach (var part in parts)
-                {
-                    string clean = part.Trim();
-                    string tag = clean.ToUpper().Replace(" ", "_");
-                    choices.Add((clean, tag));
-                }
-
-                ShowChoices(choices);
-                paused = true;
-                while (paused) yield return null;
-                isChoiceSection = false;
-                continue;
-            }
-
-            if (isChoiceSection && line.StartsWith("[") && line.EndsWith("]"))
-            {
-                currentTag = line.Trim('[', ']');
-                branches[currentTag] = new List<string>();
-                continue;
-            }
-
-            if (!string.IsNullOrEmpty(currentTag) && branches.ContainsKey(currentTag))
-            {
-                branches[currentTag].Add(line);
-                continue;
-            }
-
-            if (line == "[MERGE]")
-            {
-                seeking--;
-                continue;
-            }
-
-            // Tag filtering (e.g., [I_AGREE|NOT_TO_ME])
-            if (line.StartsWith("[") && line.EndsWith("]"))
-            {
-                string[] tags = line.Trim('[', ']').Split('|');
-                if (tags.Any(tag => tag == searchTag))
-                {
-                    searchTag = "";
-                    continue;
-                }
-                else
-                {
-                    continue;
-                }
-            }
-
-            // Normal dialogue
-            yield return StartCoroutine(DisplayMessage(line));
-        }
-
-        // Play chosen branch if it exists
-        if (!string.IsNullOrEmpty(searchTag) && branches.TryGetValue(searchTag, out var branchLines))
-        {
-            foreach (var msg in branchLines)
-            {
-                yield return StartCoroutine(DisplayMessage(msg));
-            }
-        }
-
-        Debug.Log($"✅ Finished scenario chat: {fileName}");
-
-        // Unlock next content
+        // Unlock next
         if (siteIndex < siteControllers.Length)
         {
             if (scenarioNum == 1)
@@ -384,10 +265,6 @@ public class ChatController : MonoBehaviour
 
         ShowAvailableStories();
     }
-
-
-
-
 
     private string GetSpeakerColorHex(string speaker)
     {
@@ -403,7 +280,7 @@ public class ChatController : MonoBehaviour
         return ColorUtility.ToHtmlStringRGB(defaultColor);
     }
 
-    IEnumerator LoadScript()
+    IEnumerator LoadScript(string[] customScript = null)
     {
         Debug.Log("🔄 Loading script from file...");
         bool isChoiceSection = false;
@@ -411,6 +288,7 @@ public class ChatController : MonoBehaviour
         int seeking = 0;
 
         CutsceneTrigger cutsceneTrigger = FindObjectOfType<CutsceneTrigger>();
+        var activeScript = customScript ?? script;
 
         for (int i = 0; i < script.Length; i++)
         {
