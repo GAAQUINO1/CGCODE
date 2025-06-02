@@ -16,8 +16,8 @@ public class CutsceneTrigger : MonoBehaviour
 
     void Awake()
     {
-        gameplayCanvasGroup = gameplayRoot.GetComponent<CanvasGroup>();
-        if (gameplayCanvasGroup == null)
+        gameplayCanvasGroup = gameplayRoot?.GetComponent<CanvasGroup>();
+        if (gameplayRoot != null && gameplayCanvasGroup == null)
         {
             gameplayCanvasGroup = gameplayRoot.AddComponent<CanvasGroup>();
         }
@@ -36,7 +36,7 @@ public class CutsceneTrigger : MonoBehaviour
         videoPlayer.url = path;
         videoPlayer.loopPointReached += EndCutscene;
 
-        cutsceneCanvas.alpha = 1f;
+        if (cutsceneCanvas != null) cutsceneCanvas.alpha = 1f;
         videoPlayer.Play();
     }
 
@@ -44,6 +44,7 @@ public class CutsceneTrigger : MonoBehaviour
     {
         if (isPlaying && Input.GetKeyDown(KeyCode.S))
         {
+            Debug.Log("⏩ Cutscene skipped by pressing S");
             EndCutscene(videoPlayer);
         }
     }
@@ -55,8 +56,8 @@ public class CutsceneTrigger : MonoBehaviour
         videoPlayer.Stop();
         videoPlayer.loopPointReached -= EndCutscene;
 
-        cutsceneCanvas.alpha = 0f;
-        cutsceneRoot.SetActive(false);
+        if (cutsceneCanvas != null) cutsceneCanvas.alpha = 0f;
+        if (cutsceneRoot != null) cutsceneRoot.SetActive(false);
         if (gameplayCanvasGroup != null) gameplayCanvasGroup.alpha = 1f;
 
         isPlaying = false;
