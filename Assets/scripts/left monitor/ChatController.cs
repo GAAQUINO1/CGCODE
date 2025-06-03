@@ -433,7 +433,7 @@ public class ChatController : MonoBehaviour
         {
             string[] parts = message.Split(new char[] { ':' }, 2);
             string speaker = parts[0].Trim();
-            // audioController.ReadLine(speaker.ToLower().Replace(" ", ""), audioKeys[speaker]);
+            audioController.ReadLine(speaker.ToLower().Replace(" ", ""), audioKeys[speaker]);
         }
 
         yield return StartCoroutine(TypeMessage(message));
