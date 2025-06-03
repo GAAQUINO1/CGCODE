@@ -1,30 +1,74 @@
-﻿Alfie: We pay for this guy's laundry and he still complains. 
-Cloud Girl: A little extra cash is no price to pay for Cloud Girl! 
+﻿Cloud Girl: What are you thinking?
 
 [CHOICE]
-I paid the price | Laundry should be free | Donation time
+Decide Post | Pitch Option
 
-[I_PAID_THE_PRICE]
-APPLE
+[DECIDE_POST]
+Alfie: Alright, here's a good first task. 
+Cloud Girl: Lay it on me!
+Alfie: It looks like someone needs help taking their groceries back to their dorm. They just got off the bus and are stranded with too much to carry. 
+Cloud Girl: On it. What's their location?
 
-[LAUNDRY_SHOULD_BE_FREE]
-BAMMAM
-
-[DONATION_TIME]
-LASFKLJ
-
-[MERGE]
-1
-[CUTSCENE:grocery]
-Cloud Girl: Find any new leads? Anything still outstanding? 
-Alfie: Let's do some digging.
-System: THANK YOU FOR PLAYTESTING SUPER CLOUD SOURCED!
+[PITCH_OPTION]
+Alfie: Let me run a situation by you, see how you feel. 
+Cloud Girl: Sure, let’s feel things out first!
+Alfie: It looks like someone needs help taking their groceries back to their dorm. They just got off the bus and are stranded with too much to carry.
+Cloud Girl: That sounds pretty critical. We wouldn't want any frozen items to go bad. Looks like a job for Cloud Girl!
+Alfie: Roger that. We'll review the other requests after we're done with this. 
+Cloud Girl: Sounds good! What's their location?
 
 [MERGE]
-2
-[CUTSCENE:grocery]
-Cloud Girl: Find any new leads? Anything still outstanding? 
-Alfie: Let's do some digging.
-System: THANK YOU FOR PLAYTESTING SUPER CLOUD SOURCED!
+Alfie: Not far, it's the bus stop closest to you.
+Cloud Girl: Should I teleport in or keep things down-low?
 
-[END]
+[CHOICE]
+Head there on foot | Teleport in
+
+[HEAD_THERE_ON_FOOT]
+Alfie: Keep things uneventful for now. We don't want to attract too much attention this early. 
+Cloud Girl: Got it.
+Alfie: Should I send out our usual active patrol announcement? 
+Cloud Girl: Definitely! I'm just getting started.
+System: BLOG UPDATED TO ACTIVE DUTY
+
+[TELEPORT_IN]
+Alfie: Might as well make a flashy entrance! That'll put you on the radar, but I'm sure they'll appreciate the quick help. 
+Cloud Girl: Got it. It'll take me two bursts, then I'll identify the targets.
+
+[MERGE]
+Cloud Girl: Oh! I think I see them!
+System: CUTSCENE TIME!
+
+[CHOICE]
+PLAY CUTSCENE
+
+[PLAY_CUTSCENE]
+[CUTSCENE:grocery]
+
+[MERGE]
+Alfie: That’s it?
+Cloud Girl: I'm all done! What's next?
+Alfie: Let me refresh everything, see what's changed.
+Cloud Girl: You know what would be cute? If I started carrying around reusable bags. The little ones, where they zip up all nice and then you pull them out to have a bag. 
+Alfie: You expect to be helping with a lot more people's grocery runs?
+Cloud Girl: Wouldn't hurt to be prepared! Plus, we could get cute custom-made cloud shaped ones. It would be on brand!
+
+[CHOICE]
+Like the idea | Hesitant about it | Think the idea is tacky
+
+[LIKE_THE_IDEA]
+Alfie: That's not a bad idea. Not something we could immediately set in motion, but I could look into some options.
+Cloud Girl: That's the Alfie I know!
+Alfie: Ha, okay, but don't get your hopes up. I can't promise anything.
+
+[HESITANT_ABOUT_IT]
+Alfie: Might be tricky, I don't exactly have Cloud Girl merch in the budget.
+Cloud Girl: We have a budget?
+Alfie: Exactly.
+
+[THINK_THE_IDEA_IS_TACKY]
+Alfie: Really? Branded merchandise already? Might be a bit tacky. 
+Cloud Girl: Maybe you're right. We can put merch aside for the moment. Revisit it later.
+Alfie: I'll put a pin in it.
+
+[END

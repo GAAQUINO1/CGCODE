@@ -1,10 +1,11 @@
-using UnityEngine;
+using UnityEngine; 
 using TMPro;
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System;
 
 public class ChatController : MonoBehaviour
 {
@@ -121,7 +122,9 @@ public class ChatController : MonoBehaviour
         }
 
         Debug.Log("✅ Chat system ready. Waiting for player to interact.");
-        gameCoroutine = StartCoroutine(LoadScript());
+        if (!gameStarted)
+            gameCoroutine = StartCoroutine(LoadScript());
+
     }
 
     public void RegisterScenario(ScenarioStory story)
@@ -227,7 +230,6 @@ public class ChatController : MonoBehaviour
             StartCoroutine(PlayScenarioChat(file, site, scenarioNum));
         });
 
-        ResizeButton(button);
         count++;
     }
     IEnumerator PlayScenarioChat(string fileName, int siteIndex, int scenarioNum)
@@ -284,35 +286,55 @@ public class ChatController : MonoBehaviour
     {
         Debug.Log("🔄 Loading script from file...");
         bool isChoiceSection = false;
-        bool printingText = true;
         int seeking = 0;
 
-        CutsceneTrigger cutsceneTrigger = FindObjectOfType<CutsceneTrigger>();
         var activeScript = customScript ?? script;
 
-        for (int i = 0; i < script.Length; i++)
+        for (int i = 0; i < activeScript.Length; i++)
         {
-            string line = script[i].Trim();
+            string line = activeScript[i].Trim();
             while (paused) yield return null;
 
             Debug.Log($"📜 Processing line: {line}");
 
             if (!line.StartsWith("[") && line.Contains(":"))
             {
-                // keep audio indexing per line passed
                 string[] parts = line.Split(new char[] { ':' }, 2);
                 string speaker = parts[0].Trim();
 
                 if (audioKeys.ContainsKey(speaker))
-                {
-                    audioKeys[speaker] += 1;
-                }
+                    audioKeys[speaker]++;
                 else
-                {
                     audioKeys[speaker] = 1;
-                }
             }
 
+            // 🔍 If we're waiting for a tag match
+            if (!string.IsNullOrEmpty(searchTag))
+            {
+                if (line.StartsWith("["))
+                {
+                    string[] possibilities = line.Trim('[', ']')
+                        .Split('|')
+                        .Select(p => p.Trim())
+                        .ToArray();
+
+                    Debug.Log($"🔎 Checking line tag(s) {string.Join(", ", possibilities)} against searchTag {searchTag}");
+
+                    if (possibilities.Any(p => string.Equals(p, searchTag, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        Debug.Log($"✅ MATCH FOUND: {searchTag} — entering branch and skipping others");
+                        searchTag = "";
+                        seeking = 1; // start skipping other branches after this one finishes
+                        continue; // skip the tag line itself
+                    }
+
+                }
+
+                // Skip everything else while searching
+                continue;
+            }
+
+            // Cutscene trigger
             if (line.StartsWith("[CUTSCENE:"))
             {
                 string cutsceneName = line.Substring(10, line.Length - 11);
@@ -327,89 +349,78 @@ public class ChatController : MonoBehaviour
                     paused = false;
                 });
 
-                while (!cutsceneFinished)
-                {
-                    yield return null;
-                }
-
-                printingText = true;
+                while (!cutsceneFinished) yield return null;
                 continue;
             }
-            else if (line == "[END]")
+
+            if (line == "[END]")
             {
                 storyComplete = true;
                 OnStoryComplete?.Invoke();
                 HideChoices();
-                // ✅ Handle any queued scenario unlocks
+
                 foreach (var unlock in pendingUnlocks)
-                {
                     ApplyScenarioUnlock(unlock.siteIndex, unlock.scenarioNumber);
-                }
                 pendingUnlocks.Clear();
                 break;
             }
-            else if (string.IsNullOrWhiteSpace(line))
+
+            if (string.IsNullOrWhiteSpace(line))
             {
-                printingText = false;
+                continue;
             }
-            else if (printingText)
+
+            if (line == "[CHOICE]")
             {
-                yield return StartCoroutine(DisplayMessage(line));
+                isChoiceSection = true;
+                seeking++;
+                Debug.Log("🧩 Entering choice block");
+                continue;
             }
-            else if (isChoiceSection)
+
+            if (seeking > 0 && line == "[MERGE]")
+            {
+                seeking--;
+                continue;
+            }
+
+
+
+            if (isChoiceSection)
             {
                 isChoiceSection = false;
                 string[] parts = line.Split('|');
                 List<(string text, string tag)> choices = new List<(string, string)>();
+
                 foreach (string part in parts)
                 {
                     string cleanText = part.Trim();
                     string tag = cleanText.ToUpper().Replace(" ", "_");
                     choices.Add((cleanText, tag));
                 }
+
                 Debug.Log($"📝 Choices Loaded: {string.Join(", ", choices)}");
                 yield return new WaitForSeconds(choiceDelay);
                 ShowChoices(choices);
                 paused = true;
                 yield return null;
-            }
-            else if (!line.StartsWith("["))
-            {
                 continue;
             }
-            else if (searchTag != "")
-            {
-                string[] possibilities = line.Trim('[', ']')
-                    .Split('|')
-                    .Select(p => p.Trim())
-                    .ToArray();
 
-                if (possibilities.Contains(searchTag))
-                {
-                    searchTag = "";
-                    printingText = true;
-                }
-                else
-                {
-                    continue;
-                }
-            }
-            else if (line == "[CHOICE]")
+            if (line.StartsWith("["))
             {
-                isChoiceSection = true;
-                seeking++;
+                // Skip unknown tags if not seeking
                 continue;
             }
-            else if (seeking > 0 && line == "[MERGE]")
-            {
-                seeking--;
-                printingText = true;
-                continue;
-            }
+
+            // Default message display
+            yield return StartCoroutine(DisplayMessage(line));
         }
 
         yield return null;
     }
+
+
 
     IEnumerator DisplayMessage(string message)
     {
@@ -482,25 +493,41 @@ public class ChatController : MonoBehaviour
 
     void ShowChoices(List<(string text, string tag)> choices)
     {
+        Debug.Log($"📋 Showing {choices.Count} choices...");
+
         for (int i = 0; i < 3; i++)
         {
             choiceButtons[i].gameObject.SetActive(i < choices.Count);
+            choiceButtons[i].onClick.RemoveAllListeners(); // 🔧 Reset before reassign
         }
 
         for (int i = 0; i < choices.Count; i++)
         {
             TextMeshProUGUI buttonText = choiceButtons[i].GetComponentInChildren<TextMeshProUGUI>();
             buttonText.text = choices[i].text;
-            ResizeButton(choiceButtons[i]);
-            int index = i;
-            choiceButtons[i].onClick.AddListener(() => SelectChoice(choices[index].tag));
+
+            int capturedIndex = i;
+            string capturedText = choices[i].text;
+            string capturedTag = choices[i].tag;
+
+            Debug.Log($"🔘 Button {capturedIndex}: '{capturedText}' (tag: {capturedTag})");
+
+            choiceButtons[capturedIndex].onClick.AddListener(() => {
+                Debug.Log($"🖱️ Button {capturedIndex} clicked. Tag passed to SelectChoice: {capturedTag}");
+                SelectChoice(capturedTag);
+            });
         }
     }
 
+
     void SelectChoice(string choiceTag)
     {
+        Debug.Log($"🟢 SELECTED CHOICE: {choiceTag}");
+
         playerChoices[choiceTag] = true;
         HideChoices();
+            Debug.Log($"🔍 Setting searchTag = {choiceTag} and unpausing script");
+
         searchTag = choiceTag;
         paused = false;
     }
@@ -514,14 +541,10 @@ public class ChatController : MonoBehaviour
         }
     }
 
-    void ResizeButton(Button button)
-    {
-        TextMeshProUGUI textComponent = button.GetComponentInChildren<TextMeshProUGUI>();
-        RectTransform buttonRect = button.GetComponent<RectTransform>();
 
-        float padding = 20f;
-        buttonRect.sizeDelta = new Vector2(textComponent.preferredWidth + padding, textComponent.preferredHeight + padding);
-    }
+
+
+
 
     [System.Serializable]
     public class ScenarioStory
