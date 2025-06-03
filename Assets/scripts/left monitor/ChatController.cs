@@ -24,6 +24,7 @@ public class ChatController : MonoBehaviour
     private bool gameStarted = false;
     private string searchTag = "";
     private bool paused = true;
+    private bool printingText = true;
     private bool storyComplete = false;
 
     // [siteIndex, scenarioNumber] => has the player seen this scenario post?
@@ -297,6 +298,7 @@ public class ChatController : MonoBehaviour
 
             Debug.Log($"📜 Processing line: {line}");
 
+			// counting audio
             if (!line.StartsWith("[") && line.Contains(":"))
             {
                 string[] parts = line.Split(new char[] { ':' }, 2);
@@ -324,12 +326,11 @@ public class ChatController : MonoBehaviour
                     {
                         Debug.Log($"✅ MATCH FOUND: {searchTag} — entering branch and skipping others");
                         searchTag = "";
+                        printingText = true;
                         seeking = 1; // start skipping other branches after this one finishes
                         continue; // skip the tag line itself
                     }
-
                 }
-
                 // Skip everything else while searching
                 continue;
             }
@@ -367,6 +368,7 @@ public class ChatController : MonoBehaviour
 
             if (string.IsNullOrWhiteSpace(line))
             {
+                printingText = false;
                 continue;
             }
 
@@ -380,11 +382,10 @@ public class ChatController : MonoBehaviour
 
             if (seeking > 0 && line == "[MERGE]")
             {
+                printingText = true;
                 seeking--;
                 continue;
             }
-
-
 
             if (isChoiceSection)
             {
@@ -413,8 +414,11 @@ public class ChatController : MonoBehaviour
                 continue;
             }
 
-            // Default message display
-            yield return StartCoroutine(DisplayMessage(line));
+            if (printingText)
+            {
+                // Default message display
+                yield return StartCoroutine(DisplayMessage(line));
+            }
         }
 
         yield return null;
@@ -429,7 +433,7 @@ public class ChatController : MonoBehaviour
         {
             string[] parts = message.Split(new char[] { ':' }, 2);
             string speaker = parts[0].Trim();
-            audioController.ReadLine(speaker.ToLower().Replace(" ", ""), audioKeys[speaker]);
+            // audioController.ReadLine(speaker.ToLower().Replace(" ", ""), audioKeys[speaker]);
         }
 
         yield return StartCoroutine(TypeMessage(message));
