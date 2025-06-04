@@ -132,5 +132,5 @@ Alfie: Challenge accepted.
 Cloud Girl: Find any new leads? Anything still outstanding? 
 Alfie: Let's do some digging.
 System: THANK YOU FOR PLAYTESTING SUPER CLOUD SOURCED!
-
 🏁 **ENDING: Cloud Girl's momentum WILL RETURN**
+[END]

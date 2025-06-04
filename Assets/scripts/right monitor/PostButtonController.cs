@@ -281,4 +281,5 @@ public class SmartPostButtonController : MonoBehaviour
         tex.LoadImage(fileData);
         return tex;
     }
+
 }
