@@ -64,34 +64,34 @@ public class ChatController : MonoBehaviour
 
         RegisterScenario(new ScenarioStory
         {
-            label = "Scenario 1 YIKYAK",
+            label = "Grocery Sale",
             fileName = "ChatScript_Site0_S1.txt",
             siteIndex = 0,
             scenarioNumber = 1
         });
         RegisterScenario(new ScenarioStory
         {
-            label = "Scenario 2 YIKYAK",
+            label = "Main Laundry",
             fileName = "ChatScript_Site0_S2.txt",
             siteIndex = 0,
             scenarioNumber = 2
         });
 
         // BLOG (siteIndex = 1)
-        RegisterScenario(new ScenarioStory
-        {
-            label = "Scenario 1 BLOG",
-            fileName = "ChatScript_Site1_S1.txt",
-            siteIndex = 1,
-            scenarioNumber = 1
-        });
-        RegisterScenario(new ScenarioStory
-        {
-            label = "Scenario 2 BLOG",
-            fileName = "ChatScript_Site1_S2.txt",
-            siteIndex = 1,
-            scenarioNumber = 2
-        });
+        //  RegisterScenario(new ScenarioStory
+        //  {
+        //     label = "Scenario 1 BLOG",
+        //     fileName = "ChatScript_Site1_S1.txt",
+        //     siteIndex = 1,
+        //     scenarioNumber = 1
+        // });
+        // RegisterScenario(new ScenarioStory
+        // {
+        //    label = "Scenario 2 BLOG",
+        //    fileName = "ChatScript_Site1_S2.txt",
+        //     siteIndex = 1,
+        //     scenarioNumber = 2
+        //   });
 
         // REDDIT (siteIndex = 2)
         RegisterScenario(new ScenarioStory
@@ -101,13 +101,13 @@ public class ChatController : MonoBehaviour
             siteIndex = 2,
             scenarioNumber = 1
         });
-        RegisterScenario(new ScenarioStory
-        {
-            label = "Scenario 2 REDDIT",
-            fileName = "ChatScript_Site2_S2.txt",
-            siteIndex = 2,
-            scenarioNumber = 2
-        });
+        //  RegisterScenario(new ScenarioStory
+        // {
+        //      label = "Scenario 2 REDDIT",
+        //      fileName = "ChatScript_Site2_S2.txt",
+        //      siteIndex = 2,
+        //      scenarioNumber = 2
+        //   });
 
         HideChoices();
 
@@ -240,12 +240,10 @@ public class ChatController : MonoBehaviour
         }
 
         string[] lines = File.ReadAllLines(path);
-        bool isChoiceSection = false;
-        int seeking = 0;
-        string currentTag = "";
-        Dictionary<string, List<string>> branches = new();
-        List<(string text, string tag)> choices = new();
 
+        bool isChoiceSection = false;
+        bool printingText = true;
+        int seeking = 0;
         CutsceneManager cutsceneManager = FindObjectOfType<CutsceneManager>();
 
         for (int i = 0; i < lines.Length; i++)
@@ -256,7 +254,7 @@ public class ChatController : MonoBehaviour
 
             Debug.Log($"📜 Scenario Line: {line}");
 
-            // Cutscene support
+            // Handle cutscene
             if (line.StartsWith("[CUTSCENE:"))
             {
                 string cutsceneName = line.Substring(10, line.Length - 11);
@@ -277,22 +275,20 @@ public class ChatController : MonoBehaviour
                 continue;
             }
 
-            // End of chat
+            // Handle END
             if (line == "[END]")
             {
                 storyComplete = true;
                 OnStoryComplete?.Invoke();
                 HideChoices();
-                PlayerPrefs.SetInt("IntroComplete", 1); // ✅ Mark intro as complete
-                PlayerPrefs.Save(); // Optional but recommended
+                PlayerPrefs.SetInt("IntroComplete", 1);
+                PlayerPrefs.Save();
 
-                // ✅ Handle any queued scenario unlocks
                 foreach (var unlock in pendingUnlocks)
                 {
                     ApplyScenarioUnlock(unlock.siteIndex, unlock.scenarioNumber);
                 }
                 pendingUnlocks.Clear();
-
 
                 break;
             }
@@ -302,83 +298,100 @@ public class ChatController : MonoBehaviour
             {
                 isChoiceSection = true;
                 seeking++;
-                HideChoices(); // good — already there!
-                choices.Clear();   // ✅ This is the critical fix
+                HideChoices();
                 continue;
             }
 
             if (isChoiceSection && !line.StartsWith("[") && line.Contains("|"))
             {
-                string[] parts = line.Split('|');
-                foreach (var part in parts)
+                List<(string text, string tag)> choices = new();
+                foreach (string part in line.Split('|'))
                 {
                     string clean = part.Trim();
                     string tag = clean.ToUpper().Replace(" ", "_");
                     choices.Add((clean, tag));
                 }
 
-                HideChoices();  // ✅ ADD THIS
-                Debug.Log($"👉 Showing {choices.Count} choice(s): {string.Join(", ", choices.Select(c => c.text))}");
-
                 ShowChoices(choices);
                 paused = true;
                 while (paused) yield return null;
                 isChoiceSection = false;
+                printingText = false;
                 continue;
             }
 
-            if (isChoiceSection && line.StartsWith("[") && line.EndsWith("]"))
+            // Skip lines unless tag matches
+            // Lock into branch mode until [MERGE]
+            if (!string.IsNullOrEmpty(searchTag))
             {
-                currentTag = line.Trim('[', ']');
-                branches[currentTag] = new List<string>();
+                if (line.StartsWith("[") && line.EndsWith("]"))
+                {
+                    string[] tags = line.Trim('[', ']').Split('|');
+                    if (tags.Contains(searchTag))
+                    {
+                        printingText = true;
+                        searchTag = ""; // Clear tag so we don't match again
+                        continue; // Begin printing this branch
+                    }
+                    else
+                    {
+                        // Different tag while still searching — skip
+                        continue;
+                    }
+                }
+
+                // Still skipping (either not a tag or not matching)
                 continue;
             }
 
-            if (!string.IsNullOrEmpty(currentTag) && branches.ContainsKey(currentTag))
+            // Once in a branch, skip any new tag headers
+            if (printingText && line.StartsWith("[") && !line.Equals("[MERGE]"))
             {
-                branches[currentTag].Add(line);
                 continue;
             }
 
+
+            // After searchTag is cleared, rely solely on `printingText` to control visibility
+            if (!printingText)
+            {
+                if (line == "[MERGE]")
+                {
+                    seeking--;
+                    if (seeking <= 0)
+                    {
+                        printingText = true;
+                        searchTag = "";
+                    }
+                }
+
+                continue; // still skipping until merge
+            }
+            if (!printingText && !line.StartsWith("["))
+            {
+                continue;
+            }
+
+            // End of a branch
             if (line == "[MERGE]")
             {
                 seeking--;
+                if (seeking <= 0)
+                {
+                    printingText = true; // ✅ THIS IS THE REAL FIX
+                    searchTag = "";
+                }
                 continue;
             }
 
-            // Tag filtering (e.g., [I_AGREE|NOT_TO_ME])
-            if (line.StartsWith("[") && line.EndsWith("]"))
+            // Show dialogue if printingText is true
+            if (printingText)
             {
-                string[] tags = line.Trim('[', ']').Split('|');
-                if (tags.Any(tag => tag == searchTag))
-                {
-                    searchTag = "";
-                    continue;
-                }
-                else
-                {
-                    continue;
-                }
+                yield return StartCoroutine(DisplayMessage(line));
             }
-
-            // Normal dialogue
-            yield return StartCoroutine(DisplayMessage(line));
-        }
-
-        // Play chosen branch if it exists
-        if (!string.IsNullOrEmpty(searchTag) && branches.TryGetValue(searchTag, out var branchLines))
-        {
-            foreach (var msg in branchLines)
-            {
-                yield return StartCoroutine(DisplayMessage(msg));
-            }
-            // 🔧 CLEAR THE TAG so parsing resumes properly
-            searchTag = "";
         }
 
         Debug.Log($"✅ Finished scenario chat: {fileName}");
 
-        // Unlock next content
         if (siteIndex < siteControllers.Length)
         {
             if (scenarioNum == 1)
@@ -389,6 +402,7 @@ public class ChatController : MonoBehaviour
 
         ShowAvailableStories();
     }
+
 
     private string GetSpeakerColorHex(string speaker)
     {
@@ -593,36 +607,56 @@ public class ChatController : MonoBehaviour
         }
     }
 
-    void ClearScreen()
-    {
-        foreach (GameObject msg in messages)
-        {
-            Destroy(msg);
-        }
-        messages.Clear();
-        HideChoices();
-    }
-
     void ShowChoices(List<(string text, string tag)> choices)
     {
-        HideChoices(); // ✅ Make sure old buttons and listeners are cleared first
+        HideChoices(); // 🧹 Clear all buttons first
 
         int max = Mathf.Min(choiceButtons.Count, choices.Count);
+        Debug.Log($"🧪 Showing {max} choices (from {choices.Count} entries)");
+
         for (int i = 0; i < max; i++)
         {
             var btn = choiceButtons[i];
             btn.gameObject.SetActive(true);
 
-            TextMeshProUGUI buttonText = btn.GetComponentInChildren<TextMeshProUGUI>();
-            buttonText.text = choices[i].text;
+            string displayText = choices[i].text;
+            string tagAtThisIndex = choices[i].tag;
 
-            int index = i;
-            btn.onClick.AddListener(() => SelectChoice(choices[index].tag));
+            // 🧠 Log exact match
+            Debug.Log($"🔗 Assigning Button {i}: \"{displayText}\" → [{tagAtThisIndex}]");
+
+            // Update button text
+            TextMeshProUGUI buttonText = btn.GetComponentInChildren<TextMeshProUGUI>();
+            if (buttonText != null)
+            {
+                buttonText.text = displayText;
+            }
+            else
+            {
+                Debug.LogWarning($"⚠️ Button {i} missing TextMeshProUGUI child!");
+            }
+
+            // 🛠️ Capture loop values into local variables
+            int capturedIndex = i;
+            string capturedText = displayText;
+            string capturedTag = tagAtThisIndex;
+
+            // Clean and assign listener safely
+            btn.onClick.RemoveAllListeners();
+            btn.onClick = new Button.ButtonClickedEvent();
+            btn.onClick.AddListener(() =>
+            {
+                Debug.Log($"🟢 Player clicked button {capturedIndex}: \"{capturedText}\" → Tag [{capturedTag}]");
+                SelectChoice(capturedTag);
+            });
         }
     }
 
     void SelectChoice(string choiceTag)
     {
+        Debug.Log($"🟢 Player selected choice with tag: {choiceTag}");
+        Debug.Log($"✅ Confirmed: Player clicked button with tag [{choiceTag}] at time {Time.time}");
+
         playerChoices[choiceTag] = true;
         HideChoices();
         searchTag = choiceTag;

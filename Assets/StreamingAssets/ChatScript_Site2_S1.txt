@@ -32,7 +32,10 @@ Cloud Girl: Alright, counting on you for navigation.
 System: CUTSCENE TIME! 
 
 [CHOICE]
-Play Cutscene
+PLAY CUTSCENE | SKIP
+
+[SKIP]
+SKIPED CUTSCENE
 
 [PLAY_CUTSCENE]
 System: THE CUTSCENE IS NOT DONE YET. 
@@ -45,18 +48,36 @@ Cloud Girl: What's the gameplan?
 [CHOICE]
 Take the bike | Stake out
 
+[STAKE_OUT]
+Alfie: Let's figure out who took the bike first, catch them once they return. 
+Cloud Girl: Alright, a stake out! 
+Alfie: Best case scenario, our thief may be amenable to returning the bike. 
+
+[CHOICE]
+PLAY CUTSCENE | SKIP
+
+[SKIP]
+SKIPED CUTSCENE
+
+[PLAY_CUTSCENE]
+SYSTEM: THIS IS THE CONFRONTATION CUTSCENE
+SYSTEM: CLOUD GIRL CONFRONTS THE THIEF. 
+SYSTEM: AND THEN SHE RETURNS THE BIKE! HAPPY ENDING
+
 [TAKE_THE_BIKE]
 Alfie: Grab the bike. You're strong enough to break the lock, we can move it to another location and report back to the original post. 
 Cloud Girl: Isn't that stealing? 
 Alfie: Technically, stealing from another thief. 
 Cloud Girl: I suppose you're right. 
-System: CUTSCENE TIME! 
+System: CUTSCENE TIME!
 
 [CHOICE]
-Play Cutscene
+PLAY CUTSCENE | SKIP
+
+[SKIP]
+SKIPED CUTSCENE
 
 [PLAY_CUTSCENE]
-[CUTSCENE:bikeTheft]
 SYSTEM: THIS IS THE THEFT CUTSCENE
 SYSTEM: CLOUD GIRL STEALS THE BIKE. 
 SYSTEM: AND THEN SHE RETURNS IT! HAPPY ENDING
@@ -65,22 +86,10 @@ SYSTEM: AND THEN SHE RETURNS IT! HAPPY ENDING
 Alfie: You served up some proper justice right there. 
 Cloud Girl: That was awesome! I made that person's day. 
 Alfie: And the thief will get a taste of their own medicine. 
-
-[STAKE_OUT]
-Alfie: Let's figure out who took the bike first, catch them once they return. 
-Cloud Girl: Alright, a stake out! 
-Alfie: Best case scenario, our thief may be amenable to returning the bike. 
-
-[CHOICE]
-Play Cutscene
-
-[PLAY_CUTSCENE]
-[CUTSCENE:bikeConfront]
-SYSTEM: THIS IS THE CONFRONTATION CUTSCENE
-SYSTEM: CLOUD GIRL CONFRONTS THE THIEF. 
-SYSTEM: AND THEN SHE RETURNS THE BIKE! HAPPY ENDING
+[END]
 
 [MERGE]
 Alfie: You served up some proper justice right there. 
 Cloud Girl: That was awesome! I made that person's day. 
 Alfie: And the thief will get a taste of their own medicine. 
+[JUMP END]

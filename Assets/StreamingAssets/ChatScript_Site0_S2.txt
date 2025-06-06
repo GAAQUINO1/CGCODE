@@ -1,4 +1,4 @@
-﻿Cloud Girl: What are you thinking? 
+﻿	Cloud Girl: What are you thinking? 
 
 [CHOICE]
 Decide Post | Pitch Option
@@ -29,12 +29,15 @@ Cloud Girl: That's nothing to be worried about, not when I'm here.
 Alfie: And I'm here if you need any additional backup.
 
 [CHOICE]
-Play Cutscene | 
+PLAY CUTSCENE | SKIP
+
+[SKIP]
+SKIPED CUTSCENE
 
 [PLAY_CUTSCENE]
-[CUTSCENE:laundrySelf]
 SYSTEM: THIS IS ONE OF THREE SLIGHT VARIATIONS OF THE LAUNDRY CUTSCENE
 SYSTEM: IT ENDS WITH CLOUD GIRL PAYING THE DRYER FEE
+
 
 [BE_DOWN_TO_EARTH]
 Alfie: We did essentially cyber-stalk this person to try and help their laundry. Maybe go for the relatable approach? 
@@ -44,10 +47,12 @@ Cloud Girl: Hey. I'm extremely down to earth.
 Alfie: Alright then, prove it. 
 
 [CHOICE]
-Play Cutscene | 
+PLAY CUTSCENE | SKIP
+
+[SKIP]
+SKIPED CUTSCENE
 
 [PLAY_CUTSCENE]
-[CUTSCENE:laundryRelate]
 SYSTEM: THIS IS ONE OF THREE SLIGHT VARATIONS OF THE LAUNDRY CUTSCENE
 SYSTEM: IT ENDS WITH CLOUD GIRL PAYING THE DRYER FEE
 
@@ -64,10 +69,12 @@ Alfie: It'll be my noble duty to inform the world of your turn to evil.
 Cloud Girl: Shush, you. I'm heading in. 
 
 [CHOICE]
-Play Cutscene | 
+PLAY CUTSCENE | SKIP
+
+[SKIP]
+SKIPED CUTSCENE 
 
 [PLAY_CUTSCENE]
-[CUTSCENE:laundryYOU]
 SYSTEM: THIS IS ONE OF THREE SLIGHT VARATIONS OF THE LAUNDRY CUTSCENE
 SYSTEM: IT ENDS WITH CLOUD GIRL PAYING THE DRYER FEE
 
@@ -84,10 +91,12 @@ Cloud Girl: Come on, I know you'll warm up to the idea... Just like this laundry
 Alfie: I'm muting the call. 
 
 [CHOICE]
-Play Cutscene | 
+PLAY CUTSCENE | SKIP
+
+[SKIP]
+SKIPED CUTSCENE
 
 [PLAY_CUTSCENE]
-[CUTSCENE:laundryEND]
 SYSTEM: THIS WRAPS UP THE LAUNDRY SCENARIO
 SYSTEM: THE STUDENT IS SHOCKED THAT CLOUD GIRL STAYED
 SYSTEM: HAPPY ENDING! 

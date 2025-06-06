@@ -42,12 +42,13 @@ System: CUTSCENE TIME!
 [CHOICE]
 PLAY CUTSCENE | SKIP
 
+[SKIP]
+SKIPED CUTSCENE
+
 [PLAY_CUTSCENE]
 CUTSCENE
 [CUTSCENE:grocery]
 
-[SKIP]
-SKIPED CUTSCENE
 
 [MERGE]
 Alfie: That’s it?
@@ -60,23 +61,22 @@ Cloud Girl: Wouldn't hurt to be prepared! Plus, we could get cute custom-made cl
 [CHOICE]
 Like the idea | Hesitant about it | Think the idea is tacky
 
-[LIKE_THE_IDEA]
-Alfie: That's not a bad idea. Not something we could immediately set in motion, but I could look into some options.
-Cloud Girl: That's the Alfie I know!
-Alfie: Ha, okay, but don't get your hopes up. I can't promise anything.
+[THINK_THE_IDEA_IS_TACKY]
+Alfie: Really? Branded merchandise already? Might be a bit tacky. 
+Cloud Girl: Maybe you're right. We can put merch aside for the moment. Revisit it later.
+Alfie: I'll put a pin in it.
 
-[END]
 
 [HESITANT_ABOUT_IT]
 Alfie: Might be tricky, I don't exactly have Cloud Girl merch in the budget.
 Cloud Girl: We have a budget?
 Alfie: Exactly.
 
-[END]
 
-[THINK_THE_IDEA_IS_TACKY]
-Alfie: Really? Branded merchandise already? Might be a bit tacky. 
-Cloud Girl: Maybe you're right. We can put merch aside for the moment. Revisit it later.
-Alfie: I'll put a pin in it.
+[LIKE_THE_IDEA]
+Alfie: That's not a bad idea. Not something we could immediately set in motion, but I could look into some options.
+Cloud Girl: That's the Alfie I know!
+Alfie: Ha, okay, but don't get your hopes up. I can't promise anything.
 
+[MERGE]
 [END]

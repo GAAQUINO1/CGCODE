@@ -1,37 +1,96 @@
-﻿starting script
+﻿System: FOR THREE MONTHS, YOU'VE BEEN HELPING OUT YOUR FRIEND IN HER PURSUIT OF HEROIC GOOD DEEDS
+System: TODAY IS A NEW DAY, WITH NEW REQUESTS AND STRANGE SITUATIONS TO UNTANGLE
+System: YOUR JOB IS TO HELP CLOUD GIRL OUT, BE A SUPPORTIVE VOICE IN HER EAR AND HELP MAKE HER WORK GO AS SMOOTHLY AS POSSIBLE. DO YOUR BEST TO FACILITATE HER GROWING NOTORIETY, BUT DON'T LET THE ATTENTION OVERWHELM. 
+System: BEGIN DAY? 
+
+[CHOICE] 
+Yes
+
+[YES]
+System: INCOMING CALL FROM CLOUD GIRL
+Alfie: Bright and early, as always. Better answer before she gets worried.
+ 
+[CHOICE]
+Join Call
+
+[JOIN_CALL]
+System: YOU HAVE JOINED THE CALL
+Cloud Girl: Hey Alfie! 
+Cloud Girl: What’s on the docket for today?
+Alfie: Give me a second…
+Alfie: Only just woke up. 
+Cloud Girl: Don’t tell me you stayed up again last night! 
+Cloud Girl: Sleep is important.
 
 [CHOICE]
 I agree | Lots of things are important | Not to me
 
 [I_AGREE]
 Alfie: Got all eight hours.
-Alfie: Every minute.
+Cloud Girl: Hey, me too! Virtual high five!
+Alfie: Achievement unlocked, only two college students with a healthy sleep schedule. 
 
 [LOTS_OF_THINGS_ARE_IMPORTANT]
-Alfie: I got... enough sleep.
+Alfie: I got… enough sleep. 
+Cloud Girl: Alfie, you’ve got to try to get eight hours! It’s important. 
+Alfie: I’m pretty sure you’re the only person at this school who gets enough sleep, Cloud Girl. 
 
 [NOT_TO_ME]
-Alfie: Some things are more important.
+Alfie: Some things are more important. 
+Cloud Girl: We can disagree to agree on that!
+Alfie: That’s, wait, what?
+Cloud Girl: That’s why I need you on top of your game, Alfie! You have to be the person who’s three steps ahead. 
+Alfie: Agree to disagree, Cloud Girl. You don’t have to worry about me. 
 
 [MERGE]
-Cloud Girl: Anyway, we’ve got a long day ahead...
-System: ending
+Cloud Girl: Okay, are there any new posts yet? 
+Cloud Girl: That’s always where we have the best luck. 
+Alfie: Let’s see…
+Cloud Girl: Oh, oh! I updated my information page. Isn’t it great?
+System: PRESS THE D OR > KEY TO LOOK AT CLOUD GIRL'S BLOG!
 
 [CHOICE]
-APLE | HSJASD | KLJASDFKLJ
+I like the bio | It is fine | The bio needs work
 
-[APLE]
-Alfie: I got... enough sleep.
+[I_LIKE_THE_BIO]
+Alfie: It’s short and sweet and to the point. 
+Cloud Girl: Glad it’s working for you! 
+Cloud Girl: I went to a tutoring session to get help, said it was for a creative writing class. 
+Alfie: Isn’t that risky?
+Cloud Girl: Why would it be risky?
+Alfie: Aren’t you trying to keep things under wraps?
+Cloud Girl: Well, obviously. I wore my mask to the meeting, and I had a classmate sign up for it. 
+Alfie: Okay. That seems fine, actually.
 
-[HSJASD]
-Alfie: Some things are more important.
+[IT_IS_FINE]
+Alfie: It’s certainly inspired. 
+Cloud Girl: Come on, Alfie! You know what you signed up for.
+Cloud Girl: Plus, I got help from a tutoring session. 
+Cloud Girl: That prose is the real deal!
+Alfie: Isn’t that risky?
+Cloud Girl: Why would it be risky?
+Alfie: Aren’t you trying to keep things under wraps?
+Cloud Girl: Well, obviously. I wore my mask to the meeting and I had a classmate sign up for it.
+Alfie: Alright, then.
 
-[KLJASDFKLJ]
-Alfie: Got all eight hours.
-Alfie: Every minute.
+[THE_BIO_NEEDS_WORK]
+Alfie: We’ll keep revisiting as we settle into things. It’ll get there.
+Cloud Girl: Really? I thought I nailed it. Got help from a tutoring session and everything.
+Cloud Girl: That prose is the real deal!
+Alfie: Isn’t that risky?
+Cloud Girl: Why would it be risky?
+Alfie: Aren’t you trying to keep things under wraps?
+Cloud Girl: Well, obviously. I wore my mask to the meeting and had a classmate sign up for it.
+Alfie: That seems fine, I guess.
 
 [MERGE]
-Cloud Girl: Anyway, we’ve got a long day ahead...
-System: ending
+Cloud Girl: But has anything been posted yet?
+Alfie: Looking.
+System: PRESS THE D OR > KEY TO LOOK AT VENT AND THREAD-IT FOR A NEW MISSION! 
 
+[CHOICE]
+I looked at social media
+
+[I_LOOKED_AT_SOCIAL_MEDIA]
+System: GOOD JOB!
 [END]
